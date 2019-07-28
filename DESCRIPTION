@@ -20,7 +20,9 @@ Imports:
 	statmod,
 	stats
 Suggests: 
+	Matrix,
 	mediation,
+	mvtnorm,
 	ppcor,
     testthat,
     covr
