@@ -4,7 +4,8 @@
 \alias{hitman}
 \title{High-throughput mediation analysis}
 \usage{
-hitman(E, M, Y, covariates = NULL, check.names = TRUE)
+hitman(E, M, Y, covariates = NULL, verbose = TRUE,
+  check.names = TRUE)
 }
 \arguments{
 \item{E}{A numeric vector of exposures.}
@@ -16,6 +17,8 @@ Must have more than one feature.}
 
 \item{covariates}{Numeric vector with one element per sample or matrix-like object with rows corresponding
 to samples and columns to covariates to be adjusted for.}
+
+\item{verbose}{Logifcal; should warnings be printed about lack of association between \code{E} and \code{Y}?}
 
 \item{check.names}{Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?}
 }

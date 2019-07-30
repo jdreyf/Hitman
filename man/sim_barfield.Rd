@@ -10,7 +10,7 @@ sim_barfield(med.fcn, b1t2.v = c(0, 0.14, 0.39), alpha = 0.05,
 }
 \arguments{
 \item{med.fcn}{Mediation function to test. Must accept parameters and output matrix with mediation p-value
-in column \code{"EMY.p"}, like \code{\link{hitman}} or \code{\link{lotman}}. Its warnings are suppressed.}
+in column \code{"EMY.p"}, like \code{\link{hitman}}. Its warnings are suppressed.}
 
 \item{b1t2.v}{Numeric vector of values that both theta2 (\code{"t2"}) and beta1 (\code{"b1"}) take.}
 

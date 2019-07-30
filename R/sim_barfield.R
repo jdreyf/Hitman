@@ -4,7 +4,7 @@
 #' is tested. For each simulation, count proportion of p-values < \code{alpha}, and at end calculate mean proportion.
 #'
 #' @param med.fcn Mediation function to test. Must accept parameters and output matrix with mediation p-value
-#' in column \code{"EMY.p"}, like \code{\link{hitman}} or \code{\link{lotman}}. Its warnings are suppressed.
+#' in column \code{"EMY.p"}, like \code{\link{hitman}}. Its warnings are suppressed.
 #' @param b1t2.v Numeric vector of values that both theta2 (\code{"t2"}) and beta1 (\code{"b1"}) take.
 #' @param nsamp Number of samples.
 #' @param ngene Number of genes other than that of primary interest to simulate.
@@ -50,11 +50,11 @@ sim_barfield <- function(med.fcn, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50,
           m.other.mat <- matrix(stats::rnorm(n=nsamp*ngene, mean=em.other, sd=1), nrow=ngene, ncol=nsamp, byrow = TRUE)
           med.mat <- rbind(m1, m.other.mat)
           dimnames(med.mat) <- list(paste0("m", 1:nrow(med.mat)), paste0("s", 1:ncol(med.mat)))
-          med.res <- suppressWarnings(hitman(E=a, M=med.mat, Y=y, covariates = x, ...))
+          med.res <- hitman(E=a, M=med.mat, Y=y, covariates = x, ...)
           prop.sig.arr[paste0("t2_", t2), paste0("b1_", b1), paste0("sim_", sim)] <- med.res["m1", "EMY.p"] < alpha
         } else {
           # ngene = 0 || not hitman
-          med.res <- suppressWarnings(med.fcn(E=a, M=m1, Y=y, covariates = x, ...))
+          med.res <- med.fcn(E=a, M=m1, Y=y, covariates = x, ...)
           prop.sig.arr[paste0("t2_", t2), paste0("b1_", b1), paste0("sim_", sim)] <- med.res[1, "EMY.p"] < alpha
         }
       }

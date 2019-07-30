@@ -4,7 +4,6 @@
 #' \code{Y}.
 #' @param M A numeric matrix-like data object with one row per feature and one column per sample of mediators.
 #' @inherit hitman
-#' @export
 
 # need to modify limma_cor, since ezcor does not handle design
 lotman <- function(E, M, Y, covariates=NULL, check.names=TRUE){

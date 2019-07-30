@@ -9,6 +9,7 @@
 #' @param Y A numeric vector of \code{length(E)} of outcomes.
 #' @param covariates Numeric vector with one element per sample or matrix-like object with rows corresponding
 #' to samples and columns to covariates to be adjusted for.
+#' @param verbose Logifcal; should warnings be printed about lack of association between \code{E} and \code{Y}?
 #' @param check.names Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?
 #' @return Data frame with columns
 #' \describe{
@@ -24,7 +25,7 @@
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.
 #' @export
 
-hitman <- function(E, M, Y, covariates=NULL, check.names=TRUE){
+hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
             stats::var(E) > 0, stats::var(Y) > 0, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M))
   if (check.names){
@@ -37,8 +38,8 @@ hitman <- function(E, M, Y, covariates=NULL, check.names=TRUE){
   # test EY; return ey.sign & weak assoc warning
   fm.ey <- stats::lm(Y ~ ., data=data.frame(Y, my.covar))
   tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "t value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|t|)"])
-  if (tt.ey["EY.p"] > 0.1){
-    warning("E and Y are not associated, so mediation may not be meaningful.")
+  if (tt.ey["EY.p"] > 0.1 && verbose){
+    warning("E and Y are not associated at p<0.1, so mediation may not be meaningful.")
   }
   ey.sign <- sign(tt.ey["EY.t"])
 
