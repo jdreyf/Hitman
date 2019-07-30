@@ -9,7 +9,7 @@
 #' @param Y A numeric vector of \code{length(E)} of outcomes.
 #' @param covariates Numeric vector with one element per sample or matrix-like object with rows corresponding
 #' to samples and columns to covariates to be adjusted for.
-#' @param verbose Logifcal; should warnings be printed about lack of association between \code{E} and \code{Y}?
+#' @param verbose Logical; should messages & warnings about lack of association between \code{E} & \code{Y} be printed?
 #' @param check.names Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?
 #' @return Data frame with columns
 #' \describe{
