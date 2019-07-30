@@ -92,7 +92,7 @@ test_that("consistent & inconsistent", {
 
 # takes a few sec -- worth it.
 test_that("barfield", {
-  prop.sig.mat <- sim_barfield(med.fcn = hitman, b1t2.v=c(0, 0.39), nsim = 50, ngene = 9)
+  prop.sig.mat <- sim_barfield(med.fnm = "hitman", b1t2.v=c(0, 0.39), nsim = 50, ngene = 9, verbose = FALSE)
   expect_lte(prop.sig.mat[1, 1], 0.05)
   expect_gte(prop.sig.mat[2, 2], 0.1)
 })

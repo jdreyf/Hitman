@@ -3,8 +3,8 @@
 #' Simulate & test mediation methods as in Barfield et al. (2017). If multiple genes are simulated, only 1st
 #' is tested. For each simulation, count proportion of p-values < \code{alpha}, and at end calculate mean proportion.
 #'
-#' @param med.fcn Mediation function to test. Must accept parameters and output matrix with mediation p-value
-#' in column \code{"EMY.p"}, like \code{\link{hitman}}. Its warnings are suppressed.
+#' @param med.fnm Quoted name of mediation function to test. The function must accept parameters and output matrix
+#' with mediation p-value in column \code{"EMY.p"}, like \code{\link{hitman}}.
 #' @param b1t2.v Numeric vector of values that both theta2 (\code{"t2"}) and beta1 (\code{"b1"}) take.
 #' @param nsamp Number of samples.
 #' @param ngene Number of genes other than that of primary interest to simulate.
@@ -15,10 +15,10 @@
 #' Testing for the indirect effect under the null for genome-wide mediation analyses. Genet Epidemiol.
 #' 2017 Dec;41(8):824-833.
 
-sim_barfield <- function(med.fcn, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50, nsim=10**4, ngene=0,
+sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50, nsim=10**4, ngene=0,
                               seed=1, verbose=TRUE, ...){
-  method.nm <- deparse(substitute(med.fcn))
-  stopifnot(ngene == 0 || method.nm == "hitman")
+  med.fcn <- eval(parse(text=med.fnm))
+  stopifnot(ngene == 0 || med.fnm == "hitman")
 
   #t = theta; b = beta
   t0 <- t1 <- t3 <- b0 <- b2 <- 0.14
@@ -50,7 +50,7 @@ sim_barfield <- function(med.fcn, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50,
           m.other.mat <- matrix(stats::rnorm(n=nsamp*ngene, mean=em.other, sd=1), nrow=ngene, ncol=nsamp, byrow = TRUE)
           med.mat <- rbind(m1, m.other.mat)
           dimnames(med.mat) <- list(paste0("m", 1:nrow(med.mat)), paste0("s", 1:ncol(med.mat)))
-          med.res <- hitman(E=a, M=med.mat, Y=y, covariates = x, ...)
+          med.res <- hitman(E=a, M=med.mat, Y=y, covariates = x, verbose=verbose, ...)
           prop.sig.arr[paste0("t2_", t2), paste0("b1_", b1), paste0("sim_", sim)] <- med.res["m1", "EMY.p"] < alpha
         } else {
           # ngene = 0 || not hitman

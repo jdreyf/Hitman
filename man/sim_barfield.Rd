@@ -4,13 +4,13 @@
 \alias{sim_barfield}
 \title{Simulate & test mediation methods as in Barfield et al. (2017)}
 \usage{
-sim_barfield(med.fcn, b1t2.v = c(0, 0.14, 0.39), alpha = 0.05,
+sim_barfield(med.fnm, b1t2.v = c(0, 0.14, 0.39), alpha = 0.05,
   nsamp = 50, nsim = 10^4, ngene = 0, seed = 1, verbose = TRUE,
   ...)
 }
 \arguments{
-\item{med.fcn}{Mediation function to test. Must accept parameters and output matrix with mediation p-value
-in column \code{"EMY.p"}, like \code{\link{hitman}}. Its warnings are suppressed.}
+\item{med.fnm}{Quoted name of mediation function to test. The function must accept parameters and output matrix
+with mediation p-value in column \code{"EMY.p"}, like \code{\link{hitman}}.}
 
 \item{b1t2.v}{Numeric vector of values that both theta2 (\code{"t2"}) and beta1 (\code{"b1"}) take.}
 
