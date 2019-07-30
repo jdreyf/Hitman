@@ -4,5 +4,7 @@ language: r
 sudo: false
 warnings_are_errors: false
 bioc_packages: limma
+r_github_packages: 
+  - jdreyf/ezlimma
 after_success:
 - Rscript -e 'covr::codecov()'
