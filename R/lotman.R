@@ -43,7 +43,7 @@ lotman <- function(E, M, Y, covariates=NULL, check.names=TRUE){
   ret <- modify_hitman_pvalues(tab=ret, overall.sign = ey.sign, p.cols=p.cols)
 
   EMY.p <- apply(ret[,p.cols], MARGIN=1, FUN=function(v){
-    max(v)^1.2
+    max(v)^1.24
   })
   EMY.FDR <- stats::p.adjust(EMY.p, method="BH")
   ret <- cbind(EMY.p, EMY.FDR, ret)
