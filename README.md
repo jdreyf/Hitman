@@ -18,16 +18,6 @@ library(remotes)
 remotes::install_github(repo="jdreyf/Hitman", build_opts = c("--no-resave-data", "--no-manual"))
 ```
 
-## Usage
-The vignette presents a tutorial. To see the vignette:
-```
-library(limma)
-library(Hitman)
-library(rmarkdown)
-browseVignettes(package="Hitman")
-```
-and click on HTML.
-
 ## Code of Conduct
 
 This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
