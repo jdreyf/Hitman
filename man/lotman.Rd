@@ -11,7 +11,8 @@ lotman(E, M, Y, covariates = NULL, check.names = TRUE)
 
 \item{M}{A numeric matrix-like data object with one row per feature and one column per sample of mediators.}
 
-\item{Y}{A numeric vector of \code{length(E)} of outcomes.}
+\item{Y}{A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
+currently supported.}
 
 \item{covariates}{Numeric vector with one element per sample or matrix-like object with rows corresponding
 to samples and columns to covariates to be adjusted for.}

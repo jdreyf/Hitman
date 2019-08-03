@@ -6,7 +6,8 @@
 #' @param E A numeric vector of exposures.
 #' @param M A numeric matrix-like data object with one row per feature and one column per sample of mediators.
 #' Must have more than one feature.
-#' @param Y A numeric vector of \code{length(E)} of outcomes.
+#' @param Y A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
+#' currently supported.
 #' @param covariates Numeric vector with one element per sample or matrix-like object with rows corresponding
 #' to samples and columns to covariates to be adjusted for.
 #' @param verbose Logical; should messages & warnings about lack of association between \code{E} & \code{Y} be printed?
@@ -26,11 +27,10 @@
 #' @export
 
 hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
+
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
-            stats::var(E) > 0, stats::var(Y) > 0, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M))
-  if (check.names){
-    stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
-  }
+            stats::var(E) > 0, length(unique(Y)) >= 3, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M))
+  if (check.names) stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
 
   # ok if covariates is NULL
   my.covar <- cbind(E=E, covariates=covariates)

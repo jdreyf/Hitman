@@ -11,7 +11,8 @@ joint_signif_mediation(E, M, Y, covariates = NULL)
 
 \item{M}{A numeric vector  of mediators with one element per sample.}
 
-\item{Y}{A numeric vector of \code{length(E)} of outcomes.}
+\item{Y}{A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
+currently supported.}
 
 \item{covariates}{Numeric vector with one element per sample or matrix-like object with rows corresponding
 to samples and columns to covariates to be adjusted for.}

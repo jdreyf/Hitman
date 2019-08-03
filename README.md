@@ -1,5 +1,4 @@
 # Hitman
-High-throughput mediation analysis
 
 [![Build Status](https://travis-ci.org/jdreyf/Hitman.svg?branch=master)](https://travis-ci.org/jdreyf/Hitman)
 [![Coverage Status](https://img.shields.io/codecov/c/github/jdreyf/Hitman/master.svg)](https://codecov.io/github/jdreyf/Hitman?branch=master)
