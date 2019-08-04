@@ -4,7 +4,8 @@
 \alias{lotman}
 \title{Low-throughput mediation analysis (Lotman)}
 \usage{
-lotman(E, M, Y, covariates = NULL, check.names = TRUE)
+lotman(E, M, Y, covariates = NULL, exponent = 1.24,
+  check.names = TRUE)
 }
 \arguments{
 \item{E}{A numeric vector of exposures.}
@@ -16,6 +17,9 @@ currently supported.}
 
 \item{covariates}{Numeric vector with one element per sample or matrix-like object with rows corresponding
 to samples and columns to covariates to be adjusted for.}
+
+\item{exponent}{Numeric exponent for \code{max(p1, p2)}. Must be \code{0<=exponent<=2}.
+You should understand this if you change it.}
 
 \item{check.names}{Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?}
 }

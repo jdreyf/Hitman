@@ -4,7 +4,7 @@
 \alias{hitman}
 \title{High-throughput mediation analysis}
 \usage{
-hitman(E, M, Y, covariates = NULL, verbose = TRUE,
+hitman(E, M, Y, covariates = NULL, verbose = TRUE, exponent = 1.24,
   check.names = TRUE)
 }
 \arguments{
@@ -20,6 +20,9 @@ currently supported.}
 to samples and columns to covariates to be adjusted for.}
 
 \item{verbose}{Logical; should messages & warnings about lack of association between \code{E} & \code{Y} be printed?}
+
+\item{exponent}{Numeric exponent for \code{max(p1, p2)}. Must be \code{0<=exponent<=2}.
+You should understand this if you change it.}
 
 \item{check.names}{Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?}
 }
