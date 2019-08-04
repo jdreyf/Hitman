@@ -26,9 +26,9 @@ Data frame with columns
 \item{EMY.FDR}{Overall FDR for mediation}
 \item{EM_dir.p}{p-value for E-->M accounting for direction of mediation}
 \item{MY_dir.p}{p-value for M-->Y accounting for direction of mediation}
-\item{EM.t}{t-statistic for E-->M, not accounting for direction}
+\item{EM.z}{z-score for E-->M, not accounting for direction}
 \item{EM.p}{p-value for E-->M, not accounting for direction}
-\item{MY.t}{t-statistic for M-->Y, not accounting for direction}
+\item{MY.z}{z-score for M-->Y, not accounting for direction}
 \item{MY.p}{p-value for M-->Y, not accounting for direction}
 }
 }

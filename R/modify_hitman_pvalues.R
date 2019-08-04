@@ -8,7 +8,7 @@
 #' @param p.cols Vector of length 2 with column names or indices of p-values.
 #' @return Matrix with p-value columns modified.
 
-modify_hitman_pvalues <- function(tab, overall.sign, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM.p", "MY.p")){
+modify_hitman_pvalues <- function(tab, overall.sign, stat.cols=c("EM.z", "MY.z"), p.cols=c("EM.p", "MY.p")){
   stopifnot(overall.sign %in% c(1, -1), nrow(tab) > 0, stat.cols %in% colnames(tab), p.cols %in% colnames(tab),
             length(stat.cols)==2, length(p.cols)==2)
 

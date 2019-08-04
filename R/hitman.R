@@ -18,9 +18,9 @@
 #' \item{EMY.FDR}{Overall FDR for mediation}
 #' \item{EM_dir.p}{p-value for E-->M accounting for direction of mediation}
 #' \item{MY_dir.p}{p-value for M-->Y accounting for direction of mediation}
-#' \item{EM.t}{t-statistic for E-->M, not accounting for direction}
+#' \item{EM.z}{z-score for E-->M, not accounting for direction}
 #' \item{EM.p}{p-value for E-->M, not accounting for direction}
-#' \item{MY.t}{t-statistic for M-->Y, not accounting for direction}
+#' \item{MY.z}{z-score for M-->Y, not accounting for direction}
 #' \item{MY.p}{p-value for M-->Y, not accounting for direction}
 #' }
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.
@@ -46,10 +46,10 @@ hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
   # change order of columns so it's consistent with c("MY.p", "MY.slope")
   # include intercept in the design matrix
   design <- stats::model.matrix(~., data=data.frame(my.covar))
-  tt.em <- ezlimma::limma_cor(object=M, design=design, coef=2, prefix="EM", cols=c("t", "P.Value"))
+  tt.em <- ezlimma::limma_cor(object=M, design=design, coef=2, prefix="EM", cols=c("z", "P.Value"))
 
   # don't need to recheck names
-  tt.my <- limma_pcor(object=M, phenotype=Y, covariates=my.covar, prefix="MY", check.names=FALSE, cols=c("t", "P.Value"))
+  tt.my <- limma_pcor(object=M, phenotype=Y, covariates=my.covar, prefix="MY", check.names=FALSE, cols=c("z", "P.Value"))
   tt.my <- tt.my[,setdiff(colnames(tt.my), "MY.FDR")]
   ret <- cbind(tt.em[rownames(tt.my),], tt.my)
 

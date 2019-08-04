@@ -27,13 +27,13 @@ lotman <- function(E, M, Y, covariates=NULL, check.names=TRUE){
   # change order of columns so it's consistent with c("MY.p", "MY.slope")
   # include intercept in the design matrix
   des.em <- stats::model.matrix(~., data=data.frame(my.covar))
-  tt.em <- ezlimma::limma_cor(object=M, design=des.em, coef=2, prefix="EM", cols=c("t", "P.Value"), moderated=FALSE)
+  tt.em <- ezlimma::limma_cor(object=M, design=des.em, coef=2, prefix="EM", cols=c("z", "P.Value"), moderated=FALSE)
 
   # don't need to recheck names
   des.my <- stats::model.matrix(~1+Y+my.covar) #test this
   colnames(des.my) <- sub(pattern="^my.covar", "", x=colnames(des.my))
   tt.my <- ezlimma::limma_cor(object=M, design = des.my, prefix="MY", check.names=FALSE,
-                      cols=c("t", "P.Value"), moderated=FALSE)
+                      cols=c("z", "P.Value"), moderated=FALSE)
   tt.my <- tt.my[,setdiff(colnames(tt.my), "MY.FDR")]
   ret <- cbind(tt.em[rownames(tt.my),], tt.my)
 

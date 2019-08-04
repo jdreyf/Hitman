@@ -4,7 +4,7 @@
 \alias{modify_hitman_pvalues}
 \title{Modify p-values of hitman or lotman}
 \usage{
-modify_hitman_pvalues(tab, overall.sign, stat.cols = c("EM.t", "MY.t"),
+modify_hitman_pvalues(tab, overall.sign, stat.cols = c("EM.z", "MY.z"),
   p.cols = c("EM.p", "MY.p"))
 }
 \arguments{
