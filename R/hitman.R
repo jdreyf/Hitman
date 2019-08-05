@@ -28,7 +28,7 @@
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.
 #' @export
 
-hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, exponent=1.24, check.names=TRUE){
+hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, exponent=1, check.names=TRUE){
 
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
             stats::var(E) > 0, length(unique(Y)) >= 3, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M),

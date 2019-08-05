@@ -41,4 +41,5 @@ hm$MY_dir.p <- hm$MY.p
 hm$EM_dir.p <- hm$EM.p
 ey.sign <- sign(cor(M[1,], grp2))
 p.cols <- c("EM_dir.p", "MY_dir.p")
-ret <- modify_hitman_pvalues(tab=hm, overall.sign = ey.sign, p.cols=p.cols)
+# rerun this on hm
+ret <- modify_hitman_pvalues(tab=hm, overall.sign = ey.sign, stat.cols=c("EM.z", "MY.z"), p.cols=p.cols)

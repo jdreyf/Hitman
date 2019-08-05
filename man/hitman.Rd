@@ -4,7 +4,7 @@
 \alias{hitman}
 \title{High-throughput mediation analysis}
 \usage{
-hitman(E, M, Y, covariates = NULL, verbose = TRUE, exponent = 1.24,
+hitman(E, M, Y, covariates = NULL, verbose = TRUE, exponent = 1,
   check.names = TRUE)
 }
 \arguments{

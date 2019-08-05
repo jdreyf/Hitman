@@ -12,31 +12,38 @@ modify_hitman_pvalues <- function(tab, overall.sign, stat.cols=c("EM.z", "MY.z")
   stopifnot(overall.sign %in% c(1, -1), nrow(tab) > 0, stat.cols %in% colnames(tab), p.cols %in% colnames(tab),
             length(stat.cols)==2, length(p.cols)==2)
 
-  # account for sign product
-  prod.sign <- sign(tab[,stat.cols[1]])*sign(tab[,stat.cols[2]])
-  wrong.sign <- which(prod.sign != overall.sign)
-  if (length(wrong.sign) > 0){
-    tab.ss <- tab[wrong.sign,]
+  p1.larger.rows <- which(tab[, p.cols[1]] > tab[, p.cols[2]])
+  if (length(p1.larger.rows) > 0){
+    # look at other sign & overall sign --> alternative
+    alt.p1 <- sign(tab[p1.larger.rows, stat.cols[2]] * overall.sign)
 
-    p1.larger.rows <- which(tab.ss[, p.cols[1]] > tab.ss[, p.cols[2]])
-    if (length(p1.larger.rows) > 0){
-      p1.pv <- apply(X=tab.ss[p1.larger.rows, c(stat.cols[1], p.cols[1])], MARGIN=1, FUN=function(v){
-        # want to flip alternative to enlarge p-value
-        alt.tmp <- ifelse (v[1] > 0, "less", "greater")
-        ezlimma:::two2one_tailed(tab=t(as.matrix(v)), stat.cols=1, p.cols=2, alternative=alt.tmp)
-      })
-      # replace
-      tab[wrong.sign, p.cols[1]][p1.larger.rows] <- p1.pv
+    if (any(alt.p1 == -1)){
+      tab[p1.larger.rows[alt.p1 == -1], p.cols[1]] <- ezlimma:::two2one_tailed(tab=tab[p1.larger.rows[alt.p1 == -1], c(stat.cols[1], p.cols[1])],
+                                                                               stat.cols=1, p.cols=2, alternative="less")
     }
-    p2.larger.rows <- setdiff(1:nrow(tab.ss), p1.larger.rows)
-    if (length(p2.larger.rows) > 0){
-      p2.pv <- apply(X=tab.ss[p2.larger.rows, c(stat.cols[2], p.cols[2])], MARGIN=1, FUN=function(v){
-        # want to flip alternative to enlarge p-value
-        alt.tmp <- ifelse (v[1] > 0, "less", "greater")
-        ezlimma:::two2one_tailed(tab=t(as.matrix(v)), stat.cols=1, p.cols=2, alternative=alt.tmp)
-      })
-      tab[wrong.sign, p.cols[2]][p2.larger.rows] <- p2.pv
+
+    if (any(alt.p1 == 1)){
+      tab[p1.larger.rows[alt.p1 == 1], p.cols[1]] <- ezlimma:::two2one_tailed(tab=tab[p1.larger.rows[alt.p1 == 1], c(stat.cols[1], p.cols[1])],
+                                                                             stat.cols=1, p.cols=2, alternative="greater")
     }
-  }# wrong sign
+  }
+
+  # MY has larger
+  p2.larger.rows <- which(tab[, p.cols[1]] < tab[, p.cols[2]])
+  if (length(p2.larger.rows) > 0){
+    # look at other sign & overall sign --> alternative
+    alt.p2 <- sign(tab[p2.larger.rows, stat.cols[1]] * overall.sign)
+
+    if (any(alt.p2 == -1)){
+      tab[p2.larger.rows[alt.p2 == -1], p.cols[2]] <- ezlimma:::two2one_tailed(tab=tab[p2.larger.rows[alt.p2 == -1], c(stat.cols[2], p.cols[2])],
+                                                                               stat.cols=1, p.cols=2, alternative="less")
+    }
+
+    if (any(alt.p2 == 1)){
+      tab[p2.larger.rows[alt.p2 == 1], p.cols[2]] <- ezlimma:::two2one_tailed(tab=tab[p2.larger.rows[alt.p2 == 1], c(stat.cols[2], p.cols[2])],
+                                                                            stat.cols=1, p.cols=2, alternative="greater")
+    }
+  }
+
   return(tab)
 }

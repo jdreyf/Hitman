@@ -15,6 +15,21 @@ test_that("E numeric", {
   expect_lt(mean(hm3$EMY.p < 0.05), 0.1)
 })
 
+test_that("one-sided for correct sign", {
+  hm <- hitman(E=ee, M=M, Y=pheno.v)
+  expect_lt(mean(hm$EMY.p < 0.05), 0.1)
+
+  hm2 <- hitman(E=ee, M=M, Y=pheno.v, covariates=covar.tmp)
+  expect_lte(mean(hm$EMY.p==hm2[rownames(hm), "EMY.p"]), 0.01)
+
+  #no variance
+  expect_error(hitman(E=numeric(length(pheno.v)), M=M, Y=pheno.v))
+
+  ee2 <- rnorm(length(pheno.v), sd=0.1)
+  expect_warning(hm3 <- hitman(E=ee2, M=M, Y=pheno.v))
+  expect_lt(mean(hm3$EMY.p < 0.05), 0.1)
+})
+
 test_that("E binary", {
   hm <- hitman(E=grp2, M=M, Y=pheno.v)
   expect_lt(mean(hm$EMY.p < 0.05), 0.2)
@@ -59,7 +74,7 @@ test_that("gene1", {
   hm <- hitman(E=grp2, M=M, Y=M[1,])
   expect_equal(rownames(hm)[1], "gene1")
 
-  expect_equal(hm["gene1", "MY.p"], hm["gene1", "MY_dir.p"])
+  expect_lt(hm["gene1", "MY_dir.p"], hm["gene1", "MY.p"])
   expect_equal(hm["gene1", "EM.p"], hm["gene1", "EM_dir.p"])
   # need to substract for rounding
   expect_gte(hm["gene1", "EMY.p"], max(hm["gene1", "EM.p"], hm["gene1", "MY.p"]) - 0.01)
@@ -92,7 +107,7 @@ test_that("consistent & inconsistent", {
 
 # takes a few sec -- worth it.
 test_that("barfield", {
-  prop.sig.mat <- sim_barfield(med.fnm = "hitman", b1t2.v=c(0, 0.39), nsim = 50, ngene = 9, verbose = FALSE)
+  prop.sig.mat <- sim_barfield(med.fnm = "hitman", b1t2.v=c(0, 0.14, 0.39), nsim = 200, ngene = 9, verbose = FALSE)
   expect_lte(prop.sig.mat[1, 1], 0.05)
   expect_gte(prop.sig.mat[2, 2], 0.1)
 })
