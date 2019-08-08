@@ -18,13 +18,15 @@ modify_hitman_pvalues <- function(tab, overall.sign, stat.cols=c("EM.z", "MY.z")
     alt.p1 <- sign(tab[p1.larger.rows, stat.cols[2]] * overall.sign)
 
     if (any(alt.p1 == -1)){
-      tab[p1.larger.rows[alt.p1 == -1], p.cols[1]] <- ezlimma:::two2one_tailed(tab=tab[p1.larger.rows[alt.p1 == -1], c(stat.cols[1], p.cols[1])],
-                                                                               stat.cols=1, p.cols=2, alternative="less")
+      tab[p1.larger.rows[alt.p1 == -1], p.cols[1]] <-
+        ezlimma:::two2one_tailed(tab=tab[p1.larger.rows[alt.p1 == -1], c(stat.cols[1], p.cols[1]), drop=FALSE],
+                                 stat.cols=1, p.cols=2, alternative="less")
     }
 
     if (any(alt.p1 == 1)){
-      tab[p1.larger.rows[alt.p1 == 1], p.cols[1]] <- ezlimma:::two2one_tailed(tab=tab[p1.larger.rows[alt.p1 == 1], c(stat.cols[1], p.cols[1])],
-                                                                             stat.cols=1, p.cols=2, alternative="greater")
+      tab[p1.larger.rows[alt.p1 == 1], p.cols[1]] <-
+        ezlimma:::two2one_tailed(tab=tab[p1.larger.rows[alt.p1 == 1], c(stat.cols[1], p.cols[1]), drop=FALSE],
+                                 stat.cols=1, p.cols=2, alternative="greater")
     }
   }
 
@@ -35,13 +37,15 @@ modify_hitman_pvalues <- function(tab, overall.sign, stat.cols=c("EM.z", "MY.z")
     alt.p2 <- sign(tab[p2.larger.rows, stat.cols[1]] * overall.sign)
 
     if (any(alt.p2 == -1)){
-      tab[p2.larger.rows[alt.p2 == -1], p.cols[2]] <- ezlimma:::two2one_tailed(tab=tab[p2.larger.rows[alt.p2 == -1], c(stat.cols[2], p.cols[2])],
-                                                                               stat.cols=1, p.cols=2, alternative="less")
+      tab[p2.larger.rows[alt.p2 == -1], p.cols[2]] <-
+        ezlimma:::two2one_tailed(tab=tab[p2.larger.rows[alt.p2 == -1], c(stat.cols[2], p.cols[2]), drop=FALSE],
+                                 stat.cols=1, p.cols=2, alternative="less")
     }
 
     if (any(alt.p2 == 1)){
-      tab[p2.larger.rows[alt.p2 == 1], p.cols[2]] <- ezlimma:::two2one_tailed(tab=tab[p2.larger.rows[alt.p2 == 1], c(stat.cols[2], p.cols[2])],
-                                                                            stat.cols=1, p.cols=2, alternative="greater")
+      tab[p2.larger.rows[alt.p2 == 1], p.cols[2]] <-
+        ezlimma:::two2one_tailed(tab=tab[p2.larger.rows[alt.p2 == 1], c(stat.cols[2], p.cols[2]), drop=FALSE],
+                                 stat.cols=1, p.cols=2, alternative="greater")
     }
   }
 

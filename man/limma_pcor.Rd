@@ -38,3 +38,6 @@ Data frame.
 \description{
 Test partial correlation of each row of an object to a phenotype vector given covariates.
 }
+\details{
+\code{covariates} should not include the regression intercept.
+}

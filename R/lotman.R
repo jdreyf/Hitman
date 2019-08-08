@@ -2,11 +2,12 @@
 #'
 #' Low-throughput mediation analysis to test if rows of \code{M} mediate the effect of exposure \code{E} on outcome
 #' \code{Y}.
+#'
 #' @param M A numeric matrix-like data object with one row per feature and one column per sample of mediators.
 #' @inherit hitman
 
 # need to modify limma_cor, since ezcor does not handle design
-lotman <- function(E, M, Y, covariates=NULL, exponent=1.24, check.names=TRUE){
+lotman <- function(E, M, Y, covariates=NULL, check.names=TRUE){
 
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
             stats::var(E) > 0, stats::var(Y) > 0, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M))
@@ -44,7 +45,7 @@ lotman <- function(E, M, Y, covariates=NULL, exponent=1.24, check.names=TRUE){
   ret <- modify_hitman_pvalues(tab=ret, overall.sign = ey.sign, p.cols=p.cols)
 
   EMY.p <- apply(ret[,p.cols], MARGIN=1, FUN=function(v){
-    max(v)^exponent
+    max(v)
   })
   EMY.FDR <- stats::p.adjust(EMY.p, method="BH")
   ret <- cbind(EMY.p, EMY.FDR, ret)

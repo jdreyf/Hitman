@@ -10,9 +10,7 @@
 #' currently supported.
 #' @param covariates Numeric vector with one element per sample or matrix-like object with rows corresponding
 #' to samples and columns to covariates to be adjusted for.
-#' @param verbose Logical; should messages & warnings about lack of association between \code{E} & \code{Y} be printed?
-#' @param exponent Numeric exponent for \code{max(p1, p2)}. Must be \code{0<=exponent<=2}.
-#' You should understand this if you change it.
+#' @param verbose Logical; should message be given lack of association between \code{E} & \code{Y}?
 #' @param check.names Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?
 #' @return Data frame with columns
 #' \describe{
@@ -28,11 +26,10 @@
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.
 #' @export
 
-hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, exponent=1, check.names=TRUE){
+hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
 
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
-            stats::var(E) > 0, length(unique(Y)) >= 3, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M),
-            is.numeric(exponent), exponent > 0, exponent <= 2)
+            stats::var(E) > 0, length(unique(Y)) >= 3, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M))
   if (check.names) stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
 
   # ok if covariates is NULL
@@ -42,7 +39,7 @@ hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, exponent=1, check.nam
   fm.ey <- stats::lm(Y ~ ., data=data.frame(Y, my.covar))
   tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "t value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|t|)"])
   if (tt.ey["EY.p"] > 0.1 && verbose){
-    warning("E and Y are not associated at p<0.1, so mediation may not be meaningful.")
+    message("E and Y are not associated at p<0.1, so mediation may not be meaningful.")
   }
   ey.sign <- sign(tt.ey["EY.t"])
 
@@ -62,7 +59,7 @@ hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, exponent=1, check.nam
   ret <- modify_hitman_pvalues(tab=ret, overall.sign = ey.sign, p.cols=p.cols)
 
   EMY.p <- apply(ret[,p.cols], MARGIN=1, FUN=function(v){
-    max(v)^exponent
+    max(v)
   })
   EMY.FDR <- stats::p.adjust(EMY.p, method="BH")
   EMY.z <- stats::qnorm(p=EMY.p, lower.tail = FALSE)
