@@ -5,7 +5,7 @@
 \title{Simulate & test mediation methods as in Barfield et al. (2017)}
 \usage{
 sim_barfield(med.fnm, b1t2.v = c(0, 0.14, 0.39), alpha = 0.05,
-  nsamp = 50, nsim = 10^4, ngene = 0, seed = 1, verbose = TRUE,
+  nsamp = 50, nsim = 10^4, ngene = 0, seed = 0, verbose = TRUE,
   ...)
 }
 \arguments{

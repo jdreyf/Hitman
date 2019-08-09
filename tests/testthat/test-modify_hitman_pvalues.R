@@ -29,3 +29,10 @@ test_that("gene72", {
   expect_equal(as.numeric(v["EM_dir.p"]),
                as.numeric(ezlimma:::two2one_tailed(v, stat.col = "EM.z", p.col="EM.p", alternative = alt.tmp)))
 })
+
+test_that("one gene", {
+  tt <- matrix(c(0.00578, 0.849, 7.09, 0.00578, -0.215, 0.849), nrow=1,
+               dimnames=list("gene1", c('EM_dir.p', 'MY_dir.p', 'EM.t', 'EM.p', 'MY.t', 'MY.p')))
+  res <- modify_hitman_pvalues(tab=tt, overall.sign = -1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_equal(nrow(res), 1)
+})

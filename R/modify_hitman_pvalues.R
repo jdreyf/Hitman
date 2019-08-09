@@ -48,6 +48,5 @@ modify_hitman_pvalues <- function(tab, overall.sign, stat.cols=c("EM.z", "MY.z")
                                  stat.cols=1, p.cols=2, alternative="greater")
     }
   }
-
   return(tab)
 }

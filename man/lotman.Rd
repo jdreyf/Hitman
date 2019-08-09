@@ -4,18 +4,22 @@
 \alias{lotman}
 \title{Low-throughput mediation analysis (Lotman)}
 \usage{
-lotman(E, M, Y, covariates = NULL, check.names = TRUE)
+lotman(E, M, Y, covariates = NULL, verbose = TRUE,
+  check.names = TRUE)
 }
 \arguments{
 \item{E}{A numeric vector of exposures.}
 
-\item{M}{A numeric matrix-like data object with one row per feature and one column per sample of mediators.}
+\item{M}{A numeric matrix-like data object with one row per feature and one column per sample of mediators.
+Vectors are not accepted.}
 
 \item{Y}{A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
 currently supported.}
 
 \item{covariates}{Numeric vector with one element per sample or matrix-like object with rows corresponding
 to samples and columns to covariates to be adjusted for.}
+
+\item{verbose}{Logical; should message be given lack of association between \code{E} & \code{Y}?}
 
 \item{check.names}{Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?}
 }

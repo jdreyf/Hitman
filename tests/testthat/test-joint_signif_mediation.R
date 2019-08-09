@@ -19,7 +19,7 @@ test_that("compare to JSmediation", {
 # takes a few sec -- worth it.
 test_that("barfield", {
   prop.sig.mat <- sim_barfield(med.fnm = "joint_signif_mediation", b1t2.v=c(0, 0.39), nsim = 50)
-  expect_lte(prop.sig.mat[1, 1], 0.02)
-  expect_gte(prop.sig.mat[2, 2], 0.45)
+  expect_lte(prop.sig.mat[1, 1], 0.03)
+  expect_gte(prop.sig.mat[2, 2], max(prop.sig.mat[2, 1], prop.sig.mat[1, 2]))
   expect_lte(prop.sig.mat[2, 2], 0.65)
 })

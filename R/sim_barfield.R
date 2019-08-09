@@ -16,7 +16,7 @@
 #' 2017 Dec;41(8):824-833.
 
 sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50, nsim=10**4, ngene=0,
-                              seed=1, verbose=TRUE, ...){
+                              seed=0, verbose=TRUE, ...){
   med.fcn <- eval(parse(text=med.fnm))
   stopifnot(ngene == 0 || med.fnm == "hitman")
 
@@ -47,10 +47,10 @@ sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50,
 
         if (ngene >= 1){
           em.other <- b0+b2*x
-          m.other.mat <- matrix(stats::rnorm(n=nsamp*ngene, mean=em.other, sd=1), nrow=ngene, ncol=nsamp, byrow = TRUE)
+          m.other.mat <- matrix(stats::rnorm(n=nsamp*ngene, mean=em.other, sd=2), nrow=ngene, ncol=nsamp, byrow = TRUE)
           med.mat <- rbind(m1, m.other.mat)
           dimnames(med.mat) <- list(paste0("m", 1:nrow(med.mat)), paste0("s", 1:ncol(med.mat)))
-          med.res <- hitman(E=a, M=med.mat, Y=y, covariates = x, verbose=verbose)
+          med.res <- hitman(E=a, M=med.mat, Y=y, covariates = x, verbose=FALSE)
           prop.sig.arr[paste0("t2_", t2), paste0("b1_", b1), paste0("sim_", sim)] <- med.res["m1", "EMY.p"] < alpha
         } else {
           # ngene = 0 || not hitman
