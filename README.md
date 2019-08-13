@@ -7,7 +7,7 @@
 ## Install
 On Windows, you should have [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
 
-Install `Hitman` from GitHub using `remotes` within R. You must install `remotes`, e.g. with `install.packages("remotes")`, if you haven't before. `Hitman` depends on `limma` so you must also install this using instruction below if you haven't before.
+Install `Hitman` from GitHub using `remotes` within R. You must install `remotes`, e.g. with `install.packages("remotes")`, if you haven't before. `Hitman` depends on `ezlimma` which depends on `limma` so you must also install these using instruction below if you haven't before.
 ```
 #if haven't already installed limma
 install.packages("BiocManager") #if haven't already installed BiocManager
@@ -15,6 +15,7 @@ library(BiocManager)
 BiocManager::install("limma")
 
 library(remotes)
+remotes::install_github(repo="jdreyf/ezlimma", build_opts = c("--no-resave-data", "--no-manual"))
 remotes::install_github(repo="jdreyf/Hitman", build_opts = c("--no-resave-data", "--no-manual"))
 ```
 
