@@ -22,7 +22,8 @@ sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50,
   stopifnot(ngene == 0 || med.fnm == "hitman")
 
   #t = theta; b = beta
-  t0 <- t1 <- t3 <- b0 <- b2 <- 0.14
+  t0 <- t3 <- b0 <- b2 <- 0.14
+  t1 <- 1 # a-->y should be strongest effect
   prop.sig.arr <- array(NA, dim=c(length(b1t2.v), length(b1t2.v), nsim),
                         dimnames=list(paste0("t2_", b1t2.v), paste0("b1_", b1t2.v), paste0("sim_", 1:nsim)))
   # sim <- 1
@@ -48,7 +49,7 @@ sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50,
 
         if (ngene >= 1){
           em.other <- b0+b2*x
-          m.other.mat <- matrix(stats::rnorm(n=nsamp*ngene, mean=em.other, sd=2), nrow=ngene, ncol=nsamp, byrow = TRUE)
+          m.other.mat <- matrix(stats::rnorm(n=nsamp*ngene, mean=em.other, sd=1), nrow=ngene, ncol=nsamp, byrow = TRUE)
           med.mat <- rbind(m1, m.other.mat)
           dimnames(med.mat) <- list(paste0("m", 1:nrow(med.mat)), paste0("s", 1:ncol(med.mat)))
           med.res <- hitman(E=a, M=med.mat, Y=y, covariates = x, verbose=FALSE)
