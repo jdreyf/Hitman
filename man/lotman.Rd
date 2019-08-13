@@ -10,8 +10,7 @@ lotman(E, M, Y, covariates = NULL, verbose = TRUE,
 \arguments{
 \item{E}{A numeric vector of exposures.}
 
-\item{M}{A numeric matrix-like data object with one row per feature and one column per sample of mediators.
-Vectors are not accepted.}
+\item{M}{A numeric matrix-like data object with one row per feature and one column per sample of mediators.}
 
 \item{Y}{A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
 currently supported.}

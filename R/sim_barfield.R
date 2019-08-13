@@ -14,6 +14,7 @@
 #' @references Barfield R, Shen J, Just AC, Vokonas PS, Schwartz J, Baccarelli AA, VanderWeele TJ, Lin X.
 #' Testing for the indirect effect under the null for genome-wide mediation analyses. Genet Epidemiol.
 #' 2017 Dec;41(8):824-833.
+#' @export
 
 sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50, nsim=10**4, ngene=0,
                               seed=0, verbose=TRUE, ...){
@@ -36,12 +37,12 @@ sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50,
         a <- stats::rnorm(n=nsamp)
 
         # eq 1; E(M1)
-        em1 <- b0+b1*a+b2*x
+        em1 <- b0 + b1*a + b2*x
         # normal here ~ log-normal or inv chi sq on counts
         m1 <- stats::rnorm(n=nsamp, mean=em1)
 
         # eq 3; E(Y)
-        ey <- t0+t1*a+t2*m1+t3*x
+        ey <- t0 + t1*a + t2*m1 + t3*x
         y <- stats::rnorm(n=nsamp, mean=ey)
         names(y) <- paste0("s", 1:length(y))
 
@@ -54,7 +55,11 @@ sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50,
           prop.sig.arr[paste0("t2_", t2), paste0("b1_", b1), paste0("sim_", sim)] <- med.res["m1", "EMY.p"] < alpha
         } else {
           # ngene = 0 || not hitman
-          med.res <- med.fcn(E=a, M=m1, Y=y, covariates = x, ...)
+          if (med.fnm == "lotman"){
+            med.res <- lotman(E=a, M=m1, Y=y, covariates = x, verbose = FALSE)
+          } else {
+            med.res <- med.fcn(E=a, M=m1, Y=y, covariates = x, ...)
+          }
           prop.sig.arr[paste0("t2_", t2), paste0("b1_", b1), paste0("sim_", sim)] <- med.res[1, "EMY.p"] < alpha
         }
       }

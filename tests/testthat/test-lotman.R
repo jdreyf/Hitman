@@ -73,8 +73,55 @@ test_that("NAs", {
   expect_silent(lotman(E=ee, M=M, Y=pheno.v))
 })
 
-test_that("testing a gene is independent of other genes", {
+test_that("single gene is independent of other genes", {
   hm1 <- lotman(E=ee, M=M[1,, drop=FALSE], Y=pheno.v, covariates=covar.tmp)
   hm2 <- lotman(E=ee, M=M, Y=pheno.v, covariates=covar.tmp)
   expect_equal(hm1[1, "EMY.p"], hm2["gene1", "EMY.p"])
+  hm3 <- lotman(E=ee, M=M[1,], Y=pheno.v, covariates=covar.tmp)
+  expect_true(all(hm1 == hm3))
+})
+
+test_that("barfield t2=0.39; b1=0", {
+  # MY.t >> 0
+  set.seed(1)
+  t0 <- t1 <- t3 <- b0 <- b2 <- 0.14
+  t2 <- 0.39; b1 <- 0
+  nsamp <- 50
+  x <- stats::rnorm(n=nsamp)
+  a <- stats::rnorm(n=nsamp)
+  # eq 1; E(M1)
+  em1 <- b0 + b1*a + b2*x
+  # normal here ~ log-normal or inv chi sq on counts
+  m1 <- stats::rnorm(n=nsamp, mean=em1)
+  # eq 3; E(Y)
+  ey <- t0 + t1*a + t2*m1 + t3*x
+  y <- stats::rnorm(n=nsamp, mean=ey)
+  med.res <- lotman(E=a, M=m1, Y=y, covariates = x, verbose = FALSE)
+  expect_gt(med.res[1, "EMY.p"], 0.05)
+})
+
+test_that("barfield t2=0; b1=0.39", {
+  # EM.t >> 0
+  set.seed(0)
+  t0 <- t1 <- t3 <- b0 <- b2 <- 0.14
+  t2 <- 0; b1 <- 0.39
+  nsamp <- 10
+  x <- stats::rnorm(n=nsamp)
+  a <- stats::rnorm(n=nsamp)
+  # eq 1; E(M1)
+  em1 <- b0 + b1*a + b2*x
+  # normal here ~ log-normal or inv chi sq on counts
+  m1 <- stats::rnorm(n=nsamp, mean=em1)
+  # eq 3; E(Y)
+  ey <- t0 + t1*a + t2*m1 + t3*x
+  y <- stats::rnorm(n=nsamp, mean=ey)
+  med.res <- lotman(E=a, M=m1, Y=y, covariates = x, verbose = FALSE)
+  expect_gt(med.res[1, "EMY.p"], 0.05)
+})
+
+# takes a few sec -- worth it.
+test_that("barfield", {
+  prop.sig.mat <- sim_barfield(med.fnm = "lotman", b1t2.v=c(0, 0.39), nsim = 50, ngene = 0, verbose = FALSE)
+  expect_lte(prop.sig.mat[1, 1], 0.05)
+  expect_gte(prop.sig.mat[2, 2], 0.1)
 })

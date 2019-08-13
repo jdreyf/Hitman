@@ -4,13 +4,14 @@
 #' \code{Y}.
 #'
 #' @param M A numeric matrix-like data object with one row per feature and one column per sample of mediators.
-#' Vectors are not accepted.
 #' @inherit hitman
+#' @export
 
 # need to modify limma_cor, since ezcor does not handle design
 lotman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
 
-  stopifnot(!is.null(dim(M)), is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)),
+  if (is.null(dim(M))) M <- matrix(M, nrow=1, dimnames=list("analyte", names(M)))
+  stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)),
             is.null(dim(Y)), stats::var(E) > 0, length(unique(Y)) >= 3, length(E)==ncol(M), length(Y)==ncol(M))
   if (check.names) stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
 
@@ -28,9 +29,9 @@ lotman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
   # change order of columns so it's consistent with c("MY.p", "MY.slope")
   # include intercept in the design matrix
   # des.em <- stats::model.matrix(~., data=data.frame(my.covar))
-  tt.em <- t(apply(as.matrix(M), MARGIN = 1, FUN=function(vv){
-    fm <- stats::lm(vv ~ ., data=data.frame(my.covar))
-    summary(fm)$coefficients[2, c("t value", "Pr(>|t|)")]
+  tt.em <- t(apply(as.matrix(M), MARGIN = 1, FUN=function(mm){
+    fm <- stats::lm(mm ~ ., data=data.frame(my.covar))
+    summary(fm)$coefficients["E", c("t value", "Pr(>|t|)")]
   }))
   colnames(tt.em) <- sub("t value", "t", sub("Pr(>|t|)", "p", colnames(tt.em), fixed=TRUE))
   colnames(tt.em) <- paste0("EM.", colnames(tt.em))

@@ -36,10 +36,11 @@ grp2 <- ezlimma:::batch2design(grp)[,1]
 names(grp2) <- colnames(M)
 covar.tmp <- rnorm(length(pheno.v))
 
-hm <- hitman(E=grp2, M=M, Y=M[1,], check.names = FALSE)
-hm$MY_dir.p <- hm$MY.p
-hm$EM_dir.p <- hm$EM.p
+hm <- hm.tmp <- hitman(E=grp2, M=M, Y=M[1,], check.names = FALSE)
+
+hm.tmp$MY_dir.p <- hm.tmp$MY.p
+hm.tmp$EM_dir.p <- hm.tmp$EM.p
 ey.sign <- sign(cor(M[1,], grp2))
 p.cols <- c("EM_dir.p", "MY_dir.p")
 # rerun this on hm
-ret <- modify_hitman_pvalues(tab=hm, overall.sign = ey.sign, stat.cols=c("EM.z", "MY.z"), p.cols=p.cols)
+ret <- modify_hitman_pvalues(tab=hm.tmp, overall.sign = ey.sign, stat.cols=c("EM.z", "MY.z"), p.cols=p.cols)

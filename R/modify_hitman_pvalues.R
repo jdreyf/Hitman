@@ -12,41 +12,25 @@ modify_hitman_pvalues <- function(tab, overall.sign, stat.cols=c("EM.z", "MY.z")
   stopifnot(overall.sign %in% c(1, -1), nrow(tab) > 0, stat.cols %in% colnames(tab), p.cols %in% colnames(tab),
             length(stat.cols)==2, length(p.cols)==2)
 
-  p1.larger.rows <- which(tab[, p.cols[1]] > tab[, p.cols[2]])
-  if (length(p1.larger.rows) > 0){
-    # look at other sign & overall sign --> alternative
-    alt.p1 <- sign(tab[p1.larger.rows, stat.cols[2]] * overall.sign)
+  gr.rows <- list(p1=which(tab[, p.cols[1]] > tab[, p.cols[2]]))
+  gr.rows$p2 <- setdiff(1:nrow(tab), gr.rows$p1)
 
-    if (any(alt.p1 == -1)){
-      tab[p1.larger.rows[alt.p1 == -1], p.cols[1]] <-
-        ezlimma:::two2one_tailed(tab=tab[p1.larger.rows[alt.p1 == -1], c(stat.cols[1], p.cols[1]), drop=FALSE],
-                                 stat.cols=1, p.cols=2, alternative="less")
+  for (gr.ind in seq_along(gr.rows)){
+    rows.tmp <- gr.rows[[gr.ind]]
+    if (length(rows.tmp) > 0){
+      # look at other sign * overall sign --> alternative
+      gr.other.ind <- setdiff(1:2, gr.ind)
+      alt.v <- sign(tab[rows.tmp, stat.cols[gr.other.ind]] * overall.sign)
+
+      for (alt.sgn in c(-1, 1)){
+        if (any(alt.v == alt.sgn)){
+          alt.chr <- ifelse(alt.sgn == 1, "greater", "less")
+          tab[rows.tmp[alt.v == alt.sgn], p.cols[gr.ind]] <-
+            ezlimma:::two2one_tailed(tab=tab[rows.tmp[alt.v == alt.sgn], c(stat.cols[gr.ind], p.cols[gr.ind]), drop=FALSE],
+                                     stat.cols=1, p.cols=2, alternative=alt.chr)
+        }
+      }# for alt.sgn
     }
-
-    if (any(alt.p1 == 1)){
-      tab[p1.larger.rows[alt.p1 == 1], p.cols[1]] <-
-        ezlimma:::two2one_tailed(tab=tab[p1.larger.rows[alt.p1 == 1], c(stat.cols[1], p.cols[1]), drop=FALSE],
-                                 stat.cols=1, p.cols=2, alternative="greater")
-    }
-  }
-
-  # MY has larger
-  p2.larger.rows <- which(tab[, p.cols[1]] < tab[, p.cols[2]])
-  if (length(p2.larger.rows) > 0){
-    # look at other sign & overall sign --> alternative
-    alt.p2 <- sign(tab[p2.larger.rows, stat.cols[1]] * overall.sign)
-
-    if (any(alt.p2 == -1)){
-      tab[p2.larger.rows[alt.p2 == -1], p.cols[2]] <-
-        ezlimma:::two2one_tailed(tab=tab[p2.larger.rows[alt.p2 == -1], c(stat.cols[2], p.cols[2]), drop=FALSE],
-                                 stat.cols=1, p.cols=2, alternative="less")
-    }
-
-    if (any(alt.p2 == 1)){
-      tab[p2.larger.rows[alt.p2 == 1], p.cols[2]] <-
-        ezlimma:::two2one_tailed(tab=tab[p2.larger.rows[alt.p2 == 1], c(stat.cols[2], p.cols[2]), drop=FALSE],
-                                 stat.cols=1, p.cols=2, alternative="greater")
-    }
-  }
+  }# for gr.ind
   return(tab)
 }

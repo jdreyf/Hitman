@@ -33,6 +33,37 @@ test_that("gene72", {
 test_that("one gene", {
   tt <- matrix(c(0.00578, 0.849, 7.09, 0.00578, -0.215, 0.849), nrow=1,
                dimnames=list("gene1", c('EM_dir.p', 'MY_dir.p', 'EM.t', 'EM.p', 'MY.t', 'MY.p')))
-  res <- modify_hitman_pvalues(tab=tt, overall.sign = -1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
-  expect_equal(nrow(res), 1)
+  res1 <- modify_hitman_pvalues(tab=tt, overall.sign = -1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_equal(nrow(res1), 1)
+  expect_equal(res1[, "MY_dir.p"]*2, res1[, "MY.p"])
+
+  res2 <- modify_hitman_pvalues(tab=tt, overall.sign = 1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_gte(res2[, "MY_dir.p"], 0.5)
+
+  tt2 <- tt
+  tt2[, "EM.t"] <- -1*tt[, "EM.t"]
+  res3 <- modify_hitman_pvalues(tab=tt2, overall.sign = -1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_gte(res3[, "MY_dir.p"], 0.5)
+
+  res4 <- modify_hitman_pvalues(tab=tt2, overall.sign = 1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_equal(res4[, "MY_dir.p"]*2, res4[, "MY.p"])
+})
+
+test_that("another gene", {
+  tt <- matrix(c(0.149, 0.00578, -0.215, 0.149, 7.09, 0.00578), nrow=1,
+               dimnames=list("gene1", c('EM_dir.p', 'MY_dir.p', 'EM.t', 'EM.p', 'MY.t', 'MY.p')))
+  res1 <- modify_hitman_pvalues(tab=tt, overall.sign = -1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_equal(nrow(res1), 1)
+  expect_equal(res1[, "EM_dir.p"]*2, res1[, "EM.p"])
+
+  res2 <- modify_hitman_pvalues(tab=tt, overall.sign = 1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_gte(res2[, "EM_dir.p"], 0.5)
+
+  tt2 <- tt
+  tt2[, "EM.t"] <- -1*tt[, "EM.t"]
+  res3 <- modify_hitman_pvalues(tab=tt2, overall.sign = -1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_gte(res3[, "EM_dir.p"], 0.5)
+
+  res4 <- modify_hitman_pvalues(tab=tt2, overall.sign = 1, stat.cols=c("EM.t", "MY.t"), p.cols=c("EM_dir.p", "MY_dir.p"))
+  expect_equal(res4[, "EM_dir.p"]*2, res4[, "EM.p"])
 })
