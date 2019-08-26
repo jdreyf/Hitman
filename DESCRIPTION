@@ -26,6 +26,5 @@ Suggests:
 	ppcor,
     testthat,
     covr
-Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr

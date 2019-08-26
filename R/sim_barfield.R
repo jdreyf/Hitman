@@ -6,6 +6,7 @@
 #' @param med.fnm Quoted name of mediation function to test. The function must accept parameters and output matrix
 #' with mediation p-value in column \code{"EMY.p"}, like \code{\link{hitman}}.
 #' @param b1t2.v Numeric vector of values that both theta2 (\code{"t2"}) and beta1 (\code{"b1"}) take.
+#' @param t1 Numeric value of theta2 i.e. the effect of the exposure on the outcome.
 #' @param nsamp Number of samples.
 #' @param ngene Number of genes other than that of primary interest to simulate.
 #' @param ... Sent to \code{med.fcn}
@@ -16,14 +17,14 @@
 #' 2017 Dec;41(8):824-833.
 #' @export
 
-sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50, nsim=10**4, ngene=0,
+sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), t1=0.59, alpha=0.05, nsamp=50, nsim=10**4, ngene=0,
                               seed=0, verbose=TRUE, ...){
   med.fcn <- eval(parse(text=med.fnm))
   stopifnot(ngene == 0 || med.fnm == "hitman")
 
   #t = theta; b = beta
   t0 <- t3 <- b0 <- b2 <- 0.14
-  t1 <- 1 # a-->y should be strongest effect
+  # t1 <- 0.14 # a-->y should be strongest effect
   prop.sig.arr <- array(NA, dim=c(length(b1t2.v), length(b1t2.v), nsim),
                         dimnames=list(paste0("t2_", b1t2.v), paste0("b1_", b1t2.v), paste0("sim_", 1:nsim)))
   # sim <- 1
@@ -62,11 +63,11 @@ sim_barfield <- function(med.fnm, b1t2.v=c(0, 0.14, 0.39), alpha=0.05, nsamp=50,
             med.res <- med.fcn(E=a, M=m1, Y=y, covariates = x, ...)
           }
           prop.sig.arr[paste0("t2_", t2), paste0("b1_", b1), paste0("sim_", sim)] <- med.res[1, "EMY.p"] < alpha
-        }
-      }
-    }
+        } # end else
+      } # end b1
+    } # end t2
     if (verbose && sim %% 100 == 0) message("sim: ", sim)
-  }
+  } # end sim
   # summarize
   prop.sig.mat <- apply(prop.sig.arr, MARGIN=c(1,2), FUN=mean)
 }
