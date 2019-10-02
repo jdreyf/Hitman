@@ -4,14 +4,19 @@
 \alias{screen_min}
 \title{ScreenMin multiple hypthesis testing for union hypothesis tests}
 \usage{
-screen_min(p.tab, thresh = 0.05, adjust.method = "BH")
+screen_min(p.tab, thresh = 0.05, reorder.rows = TRUE, prefix = NULL,
+  adjust.method = "BH")
 }
 \arguments{
-\item{p.tab}{Table with two columns. Column 1: min of p-values & column 2: max of p-values.
-Each row is an analyte.}
+\item{p.tab}{Numberic matrix with two columns of p-values.
+Each row is an analyte. No \code{NA}'s allowed.}
 
 \item{thresh}{Numeric threshold, termed \code{c} in Djordjilovic et al. (2019). Min p-values > \code{thresh}
 are assigned adjusted p-values of one.}
+
+\item{reorder.rows}{Logical, should rows be reordered by p-value?}
+
+\item{prefix}{Character string to add to beginning of column names. \code{NULL} does not add a prefix.}
 
 \item{adjust.method}{Method used to adjust the p-values for multiple testing. Options, in increasing conservatism, 
 include \code{"none"}, \code{"BH"}, \code{"BY"}, and \code{"holm"}. See \code{\link[stats]{p.adjust}} for the complete

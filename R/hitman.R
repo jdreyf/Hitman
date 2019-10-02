@@ -12,6 +12,7 @@
 #' to samples and columns to covariates to be adjusted for.
 #' @param verbose Logical; should message be given lack of association between \code{E} & \code{Y}?
 #' @param check.names Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?
+#' @inheritParams ezlimma::ezcor
 #' @return Data frame with columns
 #' \describe{
 #' \item{EMY.p}{Overall p-value for mediation}
@@ -26,7 +27,7 @@
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.
 #' @export
 
-hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
+hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
 
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
             stats::var(E) > 0, length(unique(Y)) >= 3, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M))
@@ -54,16 +55,34 @@ hitman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
   ret <- cbind(tt.em[rownames(tt.my),], tt.my)
 
   # modify separate columns, to keep stats of two-sided tests for inspection.
-  ret <- cbind(EM_dir.p=ret$EM.p, MY_dir.p=ret$MY.p, ret)
-  p.cols <- c("EM_dir.p", "MY_dir.p")
-  ret <- modify_hitman_pvalues(tab=ret, overall.sign = ey.sign, p.cols=p.cols)
+  # ret <- cbind(EM_dir.p=ret$EM.p, MY_dir.p=ret$MY.p, ret)
+  # # p.cols <- c("EM_dir.p", "MY_dir.p")
+  # ret <- modify_hitman_pvalues(tab=ret, overall.sign = ey.sign, p.cols=p.cols)
+  # p.cols=c("EM.p", "MY.p")
 
-  EMY.p <- apply(ret[,p.cols], MARGIN=1, FUN=function(v){
-    max(v)
-  })
-  EMY.FDR <- stats::p.adjust(EMY.p, method="BH")
-  EMY.z <- stats::qnorm(p=EMY.p, lower.tail = FALSE)
+  stat.cols=c("EM.z", "MY.z")
+  p.cols=c("EM.p", "MY.p")
+  EMY.z <- EMY.p <- rep(NA, nrow(ret))
+  sgn <- apply(ret[, stat.cols], MARGIN=1, FUN=function(vv) sign(prod(vv)))
+  eq.sgn <- sgn == ey.sign
+  neq.sgn <- !eq.sgn
+  # order columns
+  p.tab.o <- t(apply(data.matrix(ret[, p.cols]), MARGIN = 1, FUN=sort))
+  colnames(p.tab.o) <- c("minp", "maxp")
+
+  if (any(neq.sgn)){
+    EMY.p[which(neq.sgn)] <- 1
+    EMY.z[which(neq.sgn)] <- NA
+  }
+
+  if (any(eq.sgn)){
+    EMY.p[which(eq.sgn)] <- 0.5*p.tab.o[which(eq.sgn), "maxp"]
+    EMY.z[which(eq.sgn)] <- stats::qnorm(p=EMY.p[which(eq.sgn)], lower.tail = FALSE)
+  }
+
+  EMY.FDR <- stats::p.adjust(EMY.p, method = "BH")
+
   ret <- cbind(EMY.z, EMY.p, EMY.FDR, ret)
-  ret <- ret[order(ret$EMY.p),]
+  if (reorder.rows) ret <- ret[order(ret$EMY.p),]
   return(ret)
 }
