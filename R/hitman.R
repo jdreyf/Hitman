@@ -15,16 +15,17 @@
 #' @inheritParams ezlimma::ezcor
 #' @return Data frame with columns
 #' \describe{
+#' \item{EMY.chisq}{Overall chi-square for mediation on 1 degreee of freedom.}
 #' \item{EMY.p}{Overall p-value for mediation}
 #' \item{EMY.FDR}{Overall FDR for mediation}
-#' \item{EM_dir.p}{p-value for E-->M accounting for direction of mediation}
-#' \item{MY_dir.p}{p-value for M-->Y accounting for direction of mediation}
 #' \item{EM.z}{z-score for E-->M, not accounting for direction}
 #' \item{EM.p}{p-value for E-->M, not accounting for direction}
 #' \item{MY.z}{z-score for M-->Y, not accounting for direction}
 #' \item{MY.p}{p-value for M-->Y, not accounting for direction}
 #' }
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.
+#'
+#' Larger z-scores and chi-square values are more significant.
 #' @export
 
 hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
@@ -62,7 +63,8 @@ hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
 
   stat.cols=c("EM.z", "MY.z")
   p.cols=c("EM.p", "MY.p")
-  EMY.z <- EMY.p <- rep(NA, nrow(ret))
+  # use chi-sq so p=1 --> chisq=0
+  EMY.chisq <- EMY.p <- rep(NA, nrow(ret))
   sgn <- apply(ret[, stat.cols], MARGIN=1, FUN=function(vv) sign(prod(vv)))
   eq.sgn <- sgn == ey.sign
   neq.sgn <- !eq.sgn
@@ -72,17 +74,17 @@ hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
 
   if (any(neq.sgn)){
     EMY.p[which(neq.sgn)] <- 1
-    EMY.z[which(neq.sgn)] <- NA
+    EMY.chisq[which(neq.sgn)] <- 0 # qchisq(p=1, df=1, lower.tail = FALSE)
   }
 
   if (any(eq.sgn)){
     EMY.p[which(eq.sgn)] <- 0.5*p.tab.o[which(eq.sgn), "maxp"]
-    EMY.z[which(eq.sgn)] <- stats::qnorm(p=EMY.p[which(eq.sgn)], lower.tail = FALSE)
+    EMY.chisq[which(eq.sgn)] <- stats::qchisq(p=EMY.p[which(eq.sgn)], df=1, lower.tail = FALSE)
   }
 
   EMY.FDR <- stats::p.adjust(EMY.p, method = "BH")
 
-  ret <- cbind(EMY.z, EMY.p, EMY.FDR, ret)
+  ret <- cbind(EMY.chisq, EMY.p, EMY.FDR, ret)
   if (reorder.rows) ret <- ret[order(ret$EMY.p),]
   return(ret)
 }

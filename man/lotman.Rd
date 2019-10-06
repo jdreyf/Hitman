@@ -25,10 +25,9 @@ to samples and columns to covariates to be adjusted for.}
 \value{
 Data frame with columns
 \describe{
+\item{EMY.chisq}{Overall chi-square for mediation on 1 degreee of freedom.}
 \item{EMY.p}{Overall p-value for mediation}
 \item{EMY.FDR}{Overall FDR for mediation}
-\item{EM_dir.p}{p-value for E-->M accounting for direction of mediation}
-\item{MY_dir.p}{p-value for M-->Y accounting for direction of mediation}
 \item{EM.z}{z-score for E-->M, not accounting for direction}
 \item{EM.p}{p-value for E-->M, not accounting for direction}
 \item{MY.z}{z-score for M-->Y, not accounting for direction}
@@ -41,4 +40,6 @@ Low-throughput mediation analysis to test if rows of \code{M} mediate the effect
 }
 \details{
 \code{E} and \code{Y} cannot have \code{NA}s.
+
+Larger z-scores and chi-square values are more significant.
 }
