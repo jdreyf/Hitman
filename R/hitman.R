@@ -25,7 +25,7 @@
 #' }
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.
 #'
-#' Larger z-scores and chi-square values are more significant.
+#' Larger chi-square values are more significant.
 #' @export
 
 hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
@@ -73,15 +73,14 @@ hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
   colnames(p.tab.o) <- c("minp", "maxp")
 
   if (any(neq.sgn)){
-    EMY.p[which(neq.sgn)] <- 1
-    EMY.chisq[which(neq.sgn)] <- 0 # qchisq(p=1, df=1, lower.tail = FALSE)
+    EMY.p[which(neq.sgn)] <- 1 - 0.5*p.tab.o[which(neq.sgn), "maxp"]
   }
 
   if (any(eq.sgn)){
     EMY.p[which(eq.sgn)] <- 0.5*p.tab.o[which(eq.sgn), "maxp"]
-    EMY.chisq[which(eq.sgn)] <- stats::qchisq(p=EMY.p[which(eq.sgn)], df=1, lower.tail = FALSE)
   }
 
+  EMY.chisq <- stats::qchisq(p=EMY.p, df=1, lower.tail = FALSE)
   EMY.FDR <- stats::p.adjust(EMY.p, method = "BH")
 
   ret <- cbind(EMY.chisq, EMY.p, EMY.FDR, ret)

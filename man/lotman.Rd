@@ -41,5 +41,5 @@ Low-throughput mediation analysis to test if rows of \code{M} mediate the effect
 \details{
 \code{E} and \code{Y} cannot have \code{NA}s.
 
-Larger z-scores and chi-square values are more significant.
+Larger chi-square values are more significant.
 }
