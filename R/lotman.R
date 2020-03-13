@@ -5,12 +5,16 @@
 #'
 #' @param M A numeric matrix-like data object with one row per feature and one column per sample of mediators.
 #' @inherit hitman
+#' @inheritParams ezlimma::ezcor
 #' @export
 
 # need to modify limma_cor, since ezcor does not handle design
-lotman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
+lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
 
-  if (is.null(dim(M))) M <- matrix(M, nrow=1, dimnames=list("analyte", names(M)))
+  if (is.null(dim(M))){
+    M <- matrix(M, nrow=1, dimnames=list("analyte", names(M)))
+    reorder.rows <- FALSE
+  }
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)),
             is.null(dim(Y)), stats::var(E) > 0, length(unique(Y)) >= 3, length(E)==ncol(M), length(Y)==ncol(M))
   if (check.names) stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
@@ -46,16 +50,29 @@ lotman <- function(E, M, Y, covariates=NULL, verbose=TRUE, check.names=TRUE){
 
   ret <- cbind(tt.em[rownames(tt.my),, drop=FALSE], tt.my)
 
-  # modify separate columns, to keep stats of two-sided tests for inspection.
-  ret <- cbind(EM_dir.p=ret[, "EM.p"], MY_dir.p=ret[, "MY.p"], ret)
-  p.cols <- c("EM_dir.p", "MY_dir.p")
-  ret <- modify_hitman_pvalues(tab=ret, overall.sign = ey.sign, p.cols=p.cols, stat.cols=c("EM.t", "MY.t"))
+  stat.cols=c("EM.t", "MY.t")
+  p.cols=c("EM.p", "MY.p")
+  # use chi-sq so p=1 --> chisq=0
+  EMY.chisq <- EMY.p <- rep(NA, nrow(ret))
+  sgn <- apply(ret[, stat.cols, drop=FALSE], MARGIN=1, FUN=function(vv) sign(prod(vv)))
+  eq.sgn <- sgn == ey.sign
+  neq.sgn <- !eq.sgn
+  # order columns
+  p.tab.o <- t(apply(data.matrix(ret[, p.cols, drop=FALSE]), MARGIN = 1, FUN=sort))
+  colnames(p.tab.o) <- c("minp", "maxp")
 
-  EMY.p <- apply(as.matrix(ret[,p.cols, drop=FALSE]), MARGIN=1, FUN=function(v){
-    max(v)
-  })
-  EMY.FDR <- stats::p.adjust(EMY.p, method="BH")
-  ret <- cbind(EMY.p, EMY.FDR, ret)
-  ret <- ret[order(ret[, "EMY.p"]),, drop=FALSE]
-  return(data.frame(ret))
+  if (any(neq.sgn)){
+    EMY.p[which(neq.sgn)] <- 1 - 0.5*p.tab.o[which(neq.sgn), "maxp"]
+  }
+
+  if (any(eq.sgn)){
+    EMY.p[which(eq.sgn)] <- 0.5*p.tab.o[which(eq.sgn), "maxp"]
+  }
+
+  EMY.chisq <- stats::qchisq(p=EMY.p, df=1, lower.tail = FALSE)
+  EMY.FDR <- stats::p.adjust(EMY.p, method = "BH")
+
+  ret <- cbind(EMY.chisq, EMY.p, EMY.FDR, ret)
+  if (reorder.rows) ret <- ret[order(ret[, "EMY.p", drop=FALSE])]
+  return(ret)
 }

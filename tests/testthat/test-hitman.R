@@ -111,3 +111,9 @@ test_that("barfield", {
   expect_lte(prop.sig.mat[1, 1], 0.05)
   expect_gte(prop.sig.mat[2, 2], 0.1)
 })
+
+
+test_that("hitman more powerful than lotman for small N", {
+  prop.sig.lot <- sim_barfield(med.fnm = "lotman", b1t2.v=c(0.39), nsim = 100, nsamp = 8, ngene = 0, verbose = FALSE)
+  prop.sig.hit <- sim_barfield(med.fnm = "hitman", b1t2.v=c(0.39), nsim = 100, nsamp = 8, ngene = 99, verbose = FALSE)
+})
