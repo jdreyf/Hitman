@@ -4,9 +4,18 @@
 \alias{sim_barfield}
 \title{Simulate & test mediation methods as in Barfield et al. (2017)}
 \usage{
-sim_barfield(med.fnm, b1t2.v = c(0, 0.14, 0.39), t1 = 0.59,
-  alpha = 0.05, nsamp = 50, nsim = 10^4, ngene = 0, seed = 0,
-  verbose = TRUE, ...)
+sim_barfield(
+  med.fnm,
+  b1t2.v = c(0, 0.14, 0.39),
+  t1 = 0.59,
+  alpha = 0.05,
+  nsamp = 50,
+  nsim = 10^4,
+  ngene = 0,
+  seed = 0,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{med.fnm}{Quoted name of mediation function to test. The function must accept parameters and output matrix

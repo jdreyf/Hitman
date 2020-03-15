@@ -4,8 +4,15 @@
 \alias{lotman}
 \title{Low-throughput mediation analysis (Lotman)}
 \usage{
-lotman(E, M, Y, covariates = NULL, verbose = TRUE,
-  check.names = TRUE)
+lotman(
+  E,
+  M,
+  Y,
+  covariates = NULL,
+  reorder.rows = TRUE,
+  verbose = TRUE,
+  check.names = TRUE
+)
 }
 \arguments{
 \item{E}{A numeric vector of exposures.}
@@ -17,6 +24,8 @@ currently supported.}
 
 \item{covariates}{Numeric vector with one element per sample or matrix-like object with rows corresponding
 to samples and columns to covariates to be adjusted for.}
+
+\item{reorder.rows}{Logical, should rows be reordered by p-value?}
 
 \item{verbose}{Logical; should message be given lack of association between \code{E} & \code{Y}?}
 

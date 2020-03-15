@@ -73,6 +73,6 @@ lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
   EMY.FDR <- stats::p.adjust(EMY.p, method = "BH")
 
   ret <- cbind(EMY.chisq, EMY.p, EMY.FDR, ret)
-  if (reorder.rows) ret <- ret[order(ret[, "EMY.p", drop=FALSE])]
+  if (reorder.rows) ret <- ret[order(ret[, "EMY.p", drop=FALSE]),]
   return(ret)
 }

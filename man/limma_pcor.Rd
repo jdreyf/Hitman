@@ -4,9 +4,16 @@
 \alias{limma_pcor}
 \title{Test partial correlation of each row of an object to a phenotype vector}
 \usage{
-limma_pcor(object, phenotype, covariates, reorder.rows = TRUE,
-  prefix = NULL, adjust.method = "BH", check.names = TRUE,
-  cols = c("t", "P.Value"))
+limma_pcor(
+  object,
+  phenotype,
+  covariates,
+  reorder.rows = TRUE,
+  prefix = NULL,
+  adjust.method = "BH",
+  check.names = TRUE,
+  cols = c("t", "P.Value")
+)
 }
 \arguments{
 \item{object}{Matrix-like data object containing log-ratios or log-expression values, with rows corresponding to 

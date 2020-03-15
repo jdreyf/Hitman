@@ -4,8 +4,12 @@
 \alias{modify_hitman_pvalues}
 \title{Modify p-values of hitman or lotman}
 \usage{
-modify_hitman_pvalues(tab, overall.sign, stat.cols = c("EM.z", "MY.z"),
-  p.cols = c("EM.p", "MY.p"))
+modify_hitman_pvalues(
+  tab,
+  overall.sign,
+  stat.cols = c("EM.z", "MY.z"),
+  p.cols = c("EM.p", "MY.p")
+)
 }
 \arguments{
 \item{tab}{Numeric matrix. Must have "EM" and "MY" stat and ".p" columns.}

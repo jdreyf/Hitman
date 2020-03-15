@@ -4,8 +4,15 @@
 \alias{hitman}
 \title{High-throughput mediation analysis}
 \usage{
-hitman(E, M, Y, covariates = NULL, reorder.rows = TRUE,
-  verbose = TRUE, check.names = TRUE)
+hitman(
+  E,
+  M,
+  Y,
+  covariates = NULL,
+  reorder.rows = TRUE,
+  verbose = TRUE,
+  check.names = TRUE
+)
 }
 \arguments{
 \item{E}{A numeric vector of exposures.}

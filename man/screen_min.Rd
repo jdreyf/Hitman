@@ -4,8 +4,13 @@
 \alias{screen_min}
 \title{ScreenMin multiple hypthesis testing for union hypothesis tests}
 \usage{
-screen_min(p.tab, thresh = 0.05, reorder.rows = TRUE, prefix = NULL,
-  adjust.method = "BH")
+screen_min(
+  p.tab,
+  thresh = 0.05,
+  reorder.rows = TRUE,
+  prefix = NULL,
+  adjust.method = "BH"
+)
 }
 \arguments{
 \item{p.tab}{Numberic matrix with two columns of p-values.
