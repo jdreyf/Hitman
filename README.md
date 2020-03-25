@@ -15,8 +15,8 @@ library(BiocManager)
 BiocManager::install("limma")
 
 library(remotes)
-remotes::install_github(repo="jdreyf/ezlimma", build_opts = c("--no-resave-data", "--no-manual"))
-remotes::install_github(repo="jdreyf/Hitman", build_opts = c("--no-resave-data", "--no-manual"))
+remotes::install_github(repo="jdreyf/ezlimma", build_opts = c("--no-resave-data", "--no-manual"), build_vignettes = TRUE)
+remotes::install_github(repo="jdreyf/Hitman", build_opts = c("--no-resave-data", "--no-manual"), build_vignettes = TRUE)
 ```
 
 ## Usage
