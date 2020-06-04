@@ -16,6 +16,7 @@ Imports:
 	knitr,
 	limma (>= 3.34.8),
 	MASS,
+	ppcor,
 	rmarkdown,
 	statmod,
 	stats
@@ -23,7 +24,6 @@ Suggests:
 	Matrix,
 	mediation,
 	mvtnorm,
-	ppcor,
     testthat,
     covr
 RoxygenNote: 7.0.2
