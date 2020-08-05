@@ -73,7 +73,7 @@ hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
   colnames(p.tab.o) <- c("minp", "maxp")
 
   if (any(neq.sgn)){
-    EMY.p[which(neq.sgn)] <- 1 - 0.5*p.tab.o[which(neq.sgn), "maxp"]
+    EMY.p[which(neq.sgn)] <- 1
   }
 
   if (any(eq.sgn)){

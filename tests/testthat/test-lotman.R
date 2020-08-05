@@ -1,11 +1,12 @@
 context("lotman")
 
 test_that("E numeric", {
-  hm <- lotman(E=ee, M=M, Y=pheno.v)
+  hm <- lotman(E=ee, M=M, Y=pheno.v, reorder.rows = FALSE)
   expect_lt(mean(hm[, "EMY.p"] < 0.05), 0.1)
 
-  hm2 <- lotman(E=ee, M=M, Y=pheno.v, covariates=covar.tmp)
-  expect_lte(mean(hm[, "EMY.p"]==hm2[rownames(hm), "EMY.p"]), 0.01)
+  hm2 <- lotman(E=ee, M=M, Y=pheno.v, covariates=covar.tmp, reorder.rows = FALSE)
+  both1 <- rowMeans(cbind(hm[,"EMY.p"], hm2[,"EMY.p"]) == 1) == 1
+  expect_lte(mean(hm[!both1, "EMY.p"]==hm2[!both1, "EMY.p"]), 0.01)
 
   #no variance
   expect_error(lotman(E=numeric(length(pheno.v)), M=M, Y=pheno.v))
@@ -37,11 +38,12 @@ test_that("E nominal --> design", {
   grp.tmp <- ezlimma:::batch2design(rep(letters[1:2], each=3))[,1]
   names(grp.tmp) <- colnames(M)
 
-  hm <- lotman(E=grp.tmp, M=M, Y=pheno.v)
+  hm <- lotman(E=grp.tmp, M=M, Y=pheno.v, reorder.rows = FALSE)
   expect_lt(mean(hm[, "EMY.p"] < 0.05), 0.2)
 
-  expect_message(hm3 <- lotman(E=grp.tmp, M=M, Y=pheno.v, covariates=covar.tmp))
-  expect_lte(mean(hm[, "EMY.p"] == hm3[rownames(hm), "EMY.p"]), 0.01)
+  expect_message(hm3 <- lotman(E=grp.tmp, M=M, Y=pheno.v, covariates=covar.tmp, reorder.rows = FALSE))
+  both1 <- rowMeans(cbind(hm[,"EMY.p"], hm3[,"EMY.p"]) == 1) == 1
+  expect_lte(mean(hm[!both1, "EMY.p"] == hm3[!both1, "EMY.p"]), 0.01)
 
   expect_error(lotman(E=rep("a", length(pheno.v)), M=M, Y=pheno.v))
   expect_error(lotman(E=c(rep("a", length(pheno.v)-1), NA), M=M, Y=pheno.v))
