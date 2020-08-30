@@ -28,7 +28,7 @@ to samples and columns to covariates to be adjusted for.}
 
 \item{reorder.rows}{Logical, should rows be reordered by p-value?}
 
-\item{verbose}{Logical; should message be given lack of association between \code{E} & \code{Y}?}
+\item{verbose}{Logical; should messages be given for lack of association between \code{E} & \code{Y} and filtering?}
 
 \item{check.names}{Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?}
 }
@@ -49,7 +49,9 @@ High-throughput mediation analysis to test if rows of \code{M} mediate the effec
 \code{Y}. See examples in vignette.
 }
 \details{
-\code{E} and \code{Y} cannot have \code{NA}s.
+\code{E} and \code{Y} cannot have \code{NA}s. \code{M} may have some \code{NA}s, but rows that have
+less non-missing values than \code{5 + ncol(covariates)} will be filtered out, and if \code{verbose=TRUE},
+a message will be written with the number of rows filtered out.
 
 Larger chi-square values are more significant.
 }

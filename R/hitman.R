@@ -10,7 +10,7 @@
 #' currently supported.
 #' @param covariates Numeric vector with one element per sample or matrix-like object with rows corresponding
 #' to samples and columns to covariates to be adjusted for.
-#' @param verbose Logical; should message be given lack of association between \code{E} & \code{Y}?
+#' @param verbose Logical; should messages be given for lack of association between \code{E} & \code{Y} and filtering?
 #' @param check.names Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?
 #' @inheritParams ezlimma::ezcor
 #' @return Data frame with columns
@@ -23,7 +23,9 @@
 #' \item{MY.z}{z-score for M-->Y, not accounting for direction}
 #' \item{MY.p}{p-value for M-->Y, not accounting for direction}
 #' }
-#' @details \code{E} and \code{Y} cannot have \code{NA}s.
+#' @details \code{E} and \code{Y} cannot have \code{NA}s. \code{M} may have some \code{NA}s, but rows that have
+#' less non-missing values than \code{5 + ncol(covariates)} will be filtered out, and if \code{verbose=TRUE},
+#' a message will be written with the number of rows filtered out.
 #'
 #' Larger chi-square values are more significant.
 #' @export
@@ -36,6 +38,20 @@ hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
 
   # ok if covariates is NULL
   my.covar <- cbind(E=E, covariates=covariates)
+
+  # filter
+  # regression df = N-k-1, then lose 2 for removeBatchEffect, so N-k-3 >= 1, i.e. need N >= k+4
+  min.df <- ncol(my.covar) + 4
+  keep.rows <- apply(M, MARGIN=1, FUN=function(vv){
+    sum(!is.na(vv)) >= min.df
+  })
+  if (sum(keep.rows) == 0){
+    stop("No rows had ", min.df, " non-missing values.")
+  } else if (sum(keep.rows) < nrow(M)){
+    if (verbose) message(nrow(M) - sum(keep.rows), " row(s) were filtered for not having ", min.df, " non-missing values.")
+    M <- M[keep.rows,, drop=FALSE]
+  }
+  # if all rows should be kept, do nothing
 
   # test EY; return ey.sign & weak assoc warning
   fm.ey <- stats::lm(Y ~ ., data=data.frame(Y, my.covar))
@@ -69,7 +85,7 @@ hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
   eq.sgn <- sgn == ey.sign
   neq.sgn <- !eq.sgn
   # order columns
-  p.tab.o <- t(apply(data.matrix(ret[, p.cols]), MARGIN = 1, FUN=sort))
+  p.tab.o <- t(apply(data.matrix(ret[, p.cols, drop=FALSE]), MARGIN = 1, FUN=sort, na.last=TRUE))
   colnames(p.tab.o) <- c("minp", "maxp")
 
   if (any(neq.sgn)){

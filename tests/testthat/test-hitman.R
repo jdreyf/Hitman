@@ -87,7 +87,17 @@ test_that("NAs", {
   expect_error(hitman(E=grp2, M=M, Y=pheno.v))
 
   M[1, 1] <- NA
-  expect_silent(hitman(E=ee, M=M, Y=pheno.v))
+  expect_silent(res1 <- hitman(E=ee, M=M, Y=pheno.v, reorder.rows = TRUE))
+  expect_equal(nrow(res1), nrow(M))
+  expect_equal(rownames(res1)[1], "gene1")
+
+  M[1, 1:2] <- NA
+  expect_message(res2 <- hitman(E=ee, M=M, Y=pheno.v))
+  expect_equal(nrow(res2), nrow(M) - 1)
+
+  M[2,] <- NA
+  expect_message(res2 <- hitman(E=ee, M=M, Y=pheno.v))
+  expect_equal(nrow(res2), nrow(M) - 2)
 })
 
 test_that("consistent & inconsistent", {
@@ -111,7 +121,6 @@ test_that("barfield", {
   expect_lte(prop.sig.mat[1, 1], 0.05)
   expect_gte(prop.sig.mat[2, 2], 0.1)
 })
-
 
 test_that("hitman more powerful than lotman for small N", {
   prop.sig.lot <- sim_barfield(med.fnm = "lotman", b1t2.v=c(0.39), nsim = 100, nsamp = 8, verbose = FALSE)
