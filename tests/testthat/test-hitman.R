@@ -115,15 +115,22 @@ test_that("consistent & inconsistent", {
   expect_gt(hm["ics", "EMY.p"], 0.9)
 })
 
-# takes a few sec -- worth it.
-test_that("barfield", {
-  prop.sig.mat <- sim_barfield(med.fnm = "hitman", b1t2.v=c(0, 0.39), nsim = 50, ngene = 9, verbose = FALSE)
-  expect_lte(prop.sig.mat[1, 1], 0.05)
-  expect_gte(prop.sig.mat[2, 2], 0.1)
-})
-
 test_that("hitman more powerful than lotman for small N", {
   prop.sig.lot <- sim_barfield(med.fnm = "lotman", b1t2.v=c(0.39), nsim = 100, nsamp = 8, verbose = FALSE)
   prop.sig.hit <- sim_barfield(med.fnm = "hitman", b1t2.v=c(0.39), nsim = 100, nsamp = 8, ngene = 99, verbose = FALSE)
   expect_gt(prop.sig.hit, prop.sig.lot)
+})
+
+# takes a few sec -- worth it.
+# barfield includes a covariate, x
+# exposure (a) & x are defined independently, but when I define a=x+rnorm(.), get identical results
+# lack of effect, b/c downstream regressions have: b1*a+b2*x
+# so if a=x+rnorm(.), then c1*(a-x)+c2*x = c1*a + (c2 - c1)*x, so c1=b1 and c2-c1=b2, and no change
+test_that("barfield", {
+  nsim <- 100
+  prop.sig.mat <- sim_barfield(med.fnm = "hitman", b1t2.v=c(0, 0.39), nsim = nsim, ngene = 9, verbose = FALSE)
+  expect_lte(prop.sig.mat[1, 1], 0.05)
+  expect_lte(prop.sig.mat[1, 2], 0.05 + 2*sqrt(0.05*0.95/nsim))
+  expect_lte(prop.sig.mat[2, 1], 0.05 + 2*sqrt(0.05*0.95/nsim))
+  expect_gte(prop.sig.mat[2, 2], 0.68 - 2*sqrt(0.05*0.95/nsim))
 })
