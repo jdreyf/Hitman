@@ -10,6 +10,8 @@
 #' currently supported.
 #' @param covariates Numeric vector with one element per sample or matrix-like object with rows corresponding
 #' to samples and columns to covariates to be adjusted for.
+#' @param fam Character string of family to use in generalized linear model of \code{Y}. The default
+#' \code{"gaussian"} reduces to the usual linear regression model. See stats::family.
 #' @param verbose Logical; should messages be given for lack of association between \code{E} & \code{Y} and filtering?
 #' @param check.names Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?
 #' @inheritParams ezlimma::ezcor
@@ -30,10 +32,11 @@
 #' Larger chi-square values are more significant.
 #' @export
 
-hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
+hitman <- function(E, M, Y, covariates=NULL, fam= "gaussian", reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
 
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
-            stats::var(E) > 0, length(unique(Y)) >= 3, nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M))
+            stats::var(E) > 0, length(E)==ncol(M), length(Y)==ncol(M),
+            length(unique(Y)) >= 3 || fam == "binomial", nrow(M) > 1)
   if (check.names) stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
 
   # ok if covariates is NULL
@@ -54,8 +57,14 @@ hitman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
   # if all rows should be kept, do nothing
 
   # test EY; return ey.sign & weak assoc warning
-  fm.ey <- stats::lm(Y ~ ., data=data.frame(Y, my.covar))
-  tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "t value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|t|)"])
+  if (fam == "gaussian"){
+    fm.ey <- stats::lm(Y ~ ., data=data.frame(Y, my.covar))
+    tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "t value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|t|)"])
+  } else {
+    fm.ey <- stats::glm(Y ~ ., data=data.frame(Y, my.covar), family=fam)
+    tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "z value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|z|)"])
+  }
+
   if (tt.ey["EY.p"] > 0.1 && verbose){
     message("E and Y are not associated at p<0.1, so mediation may not be meaningful.")
   }

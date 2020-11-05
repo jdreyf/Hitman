@@ -8,8 +8,8 @@
 #' @details \code{covariates} should not include the regression intercept.
 #' @return Data frame.
 
-limma_pcor <- function(object, phenotype, covariates, reorder.rows=TRUE, prefix=NULL, adjust.method="BH",
-                       check.names=TRUE, cols=c("t", "P.Value")){
+limma_pcor <- function(object, phenotype, covariates, fam="gaussian", reorder.rows=TRUE, prefix=NULL,
+                       adjust.method="BH", check.names=TRUE, cols=c("t", "P.Value")){
   stopifnot(length(phenotype)==ncol(object), limma::isNumeric(covariates), nrow(as.matrix(covariates))==ncol(object))
   if (check.names){ stopifnot(names(phenotype)==colnames(object)) }
 
@@ -17,7 +17,7 @@ limma_pcor <- function(object, phenotype, covariates, reorder.rows=TRUE, prefix=
   # data.frame(cbind()) can handle NULLs but not factors
   dat <- data.frame(cbind(phenotype, covariates))
   # phenotype isn't used in RHS
-  pheno.fm <- stats::lm(formula=phenotype ~ ., data=dat)
+  pheno.fm <- stats::glm(formula=phenotype ~ ., data=dat, family = fam)
   pheno.res <- stats::residuals(pheno.fm)
   # names get corrupted
   names(pheno.res) <- names(phenotype)
