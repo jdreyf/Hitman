@@ -1,7 +1,8 @@
 #' High-throughput mediation analysis
 #'
 #' High-throughput mediation analysis to test if rows of \code{M} mediate the effect of exposure \code{E} on outcome
-#' \code{Y}. See examples in vignette.
+#' \code{Y}. Before applying Hitman, you should know a priori the direction that \code{E} changes \code{Y} and verify
+#' that \code{E} changes \code{Y} significantly and in the same direction here. See examples in vignette.
 #'
 #' @param E A numeric vector of exposures.
 #' @param M A numeric matrix-like data object with one row per feature and one column per sample of mediators.

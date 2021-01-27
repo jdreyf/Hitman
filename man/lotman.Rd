@@ -45,7 +45,8 @@ Data frame with columns
 }
 \description{
 Low-throughput mediation analysis to test if rows of \code{M} mediate the effect of exposure \code{E} on outcome
-\code{Y}.
+\code{Y}. Before applying Lotman, you should know a priori the direction that \code{E} changes \code{Y} and verify
+that \code{E} changes \code{Y} significantly and in the same direction here.
 }
 \details{
 \code{E} and \code{Y} cannot have \code{NA}s. \code{M} may have some \code{NA}s, but rows that have
