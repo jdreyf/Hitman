@@ -2,7 +2,7 @@
 #'
 #' Joint Significant mediation test.
 #'
-#' @param M A numeric vector  of mediators with one element per sample.
+#' @param M A numeric vector of mediators with one element per sample.
 #' @inheritParams hitman
 #' @return p-value.
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.

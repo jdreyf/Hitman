@@ -38,18 +38,18 @@ lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
     fm <- stats::lm(mm ~ ., data=data.frame(my.covar))
     summary(fm)$coefficients["E", c("t value", "Pr(>|t|)")]
   }))
-  colnames(tt.em) <- sub("t value", "t", sub("Pr(>|t|)", "p", colnames(tt.em), fixed=TRUE))
-  colnames(tt.em) <- paste0("EM.", colnames(tt.em))
+  colnames(tt.em) <- paste0("EM.", sub("t value", "t",
+                                       sub("Pr(>|t|)", "p", colnames(tt.em), fixed=TRUE)))
 
   # don't need to recheck names
   tt.my <- t(apply(as.matrix(M), MARGIN = 1, FUN=function(vv){
     fm <- stats::lm(Y ~ 1 + vv + ., data=data.frame(my.covar))
     summary(fm)$coefficients[2, c("t value", "Pr(>|t|)")]
   }))
-  colnames(tt.my) <- sub("t value", "t", sub("Pr(>|t|)", "p", colnames(tt.my), fixed = TRUE))
-  colnames(tt.my) <- paste0("MY.", colnames(tt.my))
+  colnames(tt.my) <- paste0("MY.", sub("t value", "t",
+                                       sub("Pr(>|t|)", "p", colnames(tt.my), fixed = TRUE)))
 
-  ret <- cbind(tt.em[rownames(tt.my),, drop=FALSE], tt.my)
+  ret <- cbind(tt.em, tt.my)
 
   stat.cols=c("EM.t", "MY.t")
   p.cols=c("EM.p", "MY.p")
