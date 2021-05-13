@@ -9,7 +9,7 @@ joint_signif_mediation(E, M, Y, covariates = NULL)
 \arguments{
 \item{E}{A numeric vector of exposures.}
 
-\item{M}{A numeric vector  of mediators with one element per sample.}
+\item{M}{A numeric vector of mediators with one element per sample.}
 
 \item{Y}{A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
 currently supported.}
