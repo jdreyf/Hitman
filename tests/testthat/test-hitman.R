@@ -25,7 +25,7 @@ test_that("one-sided for correct sign", {
   #no variance
   expect_error(hitman(E=numeric(length(pheno.v)), M=M, Y=pheno.v))
 
-  ee2 <- rnorm(length(pheno.v), sd=0.1)
+  ee2 <- setNames(rnorm(length(pheno.v), sd=0.1), nm=names(pheno.v))
   expect_message(hm3 <- hitman(E=ee2, M=M, Y=pheno.v))
   expect_lt(mean(hm3$EMY.p < 0.05), 0.1)
 })
@@ -109,9 +109,10 @@ test_that("consistent & inconsistent", {
   eps <- rnorm(n=2*n, sd=sigma)
   em.ic <- -ey+eps
   em.c <- ey+eps
-  M <- rbind(ics=E+em.ic, cs=E+em.c)
-  hm <- hitman(E=E, M=M, Y=Y)
-  expect_lt(hm["cs", "EMY.p"], 0.01)
+  M2 <- rbind(ics=E+em.ic, cs=E+em.c)
+  colnames(M2) <- paste0("sample", 1:ncol(M2))
+  hm <- hitman(E=E, M=M2, Y=Y)
+  expect_lt(hm["cs", "EMY.p"], 0.05)
   expect_gt(hm["ics", "EMY.p"], 0.9)
 })
 

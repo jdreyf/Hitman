@@ -6,7 +6,7 @@
 #'
 #' @param E A numeric vector of exposures.
 #' @param M A numeric matrix-like data object with one row per feature and one column per sample of mediators.
-#' Must have more than one feature.
+#' Must have more than one feature and have row names and column names.
 #' @param Y A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
 #' currently supported.
 #' @param covariates Numeric vector with one element per sample or matrix-like object with rows corresponding
@@ -36,7 +36,7 @@
 hitman <- function(E, M, Y, covariates=NULL, fam= "gaussian", reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
 
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
-            stats::var(E) > 0, length(E)==ncol(M), length(Y)==ncol(M),
+            stats::var(E) > 0, length(E)==ncol(M), length(Y)==ncol(M), !is.null(rownames(M)), !is.null(colnames(M)),
             length(unique(Y)) >= 3 || fam == "binomial", nrow(M) > 1)
   if (check.names) stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
 
