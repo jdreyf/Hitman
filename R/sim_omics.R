@@ -22,11 +22,16 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, prop.c
   #t = theta; b = beta
   t0 <- t3 <- b0 <- b2 <- 0.14
 
-  prop.sig.arr <- array(NA, dim=c(3, 3, nsim),
-                        dimnames=list(c("hitman", "lotman", "js"), c("n.hits", "power", "false_disc"), paste0("sim_", 1:nsim)))
-
   n.consistent <- round(prop.consistent*ngene)
   n.inconsistent <- round(prop.inconsistent*ngene)
+
+  if (n.inconsistent > 0){
+    prop.sig.arr <- array(NA, dim=c(4, 3, nsim),
+                          dimnames=list(c("hitman", "lotman", "js", "js_both"), c("n.hits", "power", "false_disc"), paste0("sim_", 1:nsim)))
+  } else {
+    prop.sig.arr <- array(NA, dim=c(3, 3, nsim),
+                          dimnames=list(c("hitman", "lotman", "js"), c("n.hits", "power", "false_disc"), paste0("sim_", 1:nsim)))
+  }
 
   for (sim in 1:nsim){
     g.nms <- paste0("gene", 1:ngene)
@@ -50,7 +55,7 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, prop.c
     # eq 3; E(Y)
     y <- t0 + t1*a + t3*x + stats::rnorm(n=nsamp)
     y <- y + colSums(b1t2 * m[consistent_genes,, drop=FALSE])
-    if (n.inconsistent > 0) y <- y - colSums(b1t2 %*% m[inconsistent_genes,, drop=FALSE])
+    if (n.inconsistent > 0) y <- y - colSums(b1t2 * m[inconsistent_genes,, drop=FALSE])
 
     names(a) <- names(x) <- names(y) <- paste0("s", 1:nsamp)
 
@@ -60,7 +65,7 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, prop.c
     js.v <- apply(m, 1, FUN=function(m.v){
       joint_signif_mediation(E=a, M=m.v, Y=y, covariates = x)
     })
-    js.res <- data.frame(p=js.v, FDR=stats::p.adjust(js.v, method="fdr"))
+    js.res <- data.frame(p=js.v, FDR=stats::p.adjust(js.v, method="BH"))
 
     prop.sig.arr["hitman", "n.hits", sim] <- sum(hm.res$EMY.FDR < FDR)
     prop.sig.arr["hitman", "power", sim] <- mean(hm.res[consistent_genes, "EMY.FDR"] < FDR)
@@ -77,7 +82,14 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, prop.c
     prop.sig.arr["js", "false_disc", sim] <-
       sum(js.res[setdiff(g.nms, consistent_genes), "FDR"] < FDR)
 
-    if (verbose && sim %% 10 == 0) message("sim: ", sim)
+    if (n.inconsistent > 0){
+      prop.sig.arr["js_both", "n.hits", sim] <- sum(js.res[, "FDR"] < FDR)
+      prop.sig.arr["js_both", "power", sim] <- mean(js.res[med_genes, "FDR"] < FDR)
+      prop.sig.arr["js_both", "false_disc", sim] <-
+        sum(js.res[setdiff(g.nms, med_genes), "FDR"] < FDR)
+    }
+
+    if (verbose && sim %% 100 == 0) message("sim: ", sim)
   }
   ret <- data.frame(apply(prop.sig.arr, 1:2, FUN=mean))
   ret$fdr <- as.numeric(apply(prop.sig.arr[,"false_disc",, drop=FALSE], c(1, 2), FUN=sum)/
