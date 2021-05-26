@@ -13,7 +13,7 @@
 #' @inheritParams ezlimma:::sim_fisher
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
 
-sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, prop.consistent=1/ngene,
+sim_omics <- function(b1t2=0.39, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, prop.consistent=1/ngene,
                       prop.inconsistent=0, nsim=10**3, seed=0, verbose=TRUE){
 
   stopifnot(prop.consistent >= 1/ngene, prop.inconsistent >= 0, prop.consistent <= 1, prop.inconsistent <= 1,
@@ -48,7 +48,7 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, prop.c
     error_m <- t(MASS::mvrnorm(n=nsamp, mu = rep(0, ngene), Sigma = Sigma))
     rm(Sigma)
 
-    m <- b0 + b2*x + error_m
+    m <- b0 + matrix(b2*x, nrow=ngene, ncol=nsamp, byrow = TRUE) + error_m
     dimnames(m) <- list(g.nms, paste0("s", 1:nsamp))
     m[med_genes,] <- m[med_genes,, drop=FALSE] + b1t2*a
 
