@@ -7,17 +7,18 @@
 #' @param nsamp Number of samples.
 #' @param ngene Number of genes other than that of primary interest to simulate.
 #' @param FDR FDR threshold to apply.
-#' @param rho Inter-gene correlation coefficients.
+#' @param Sigma Matrix of inter-gene correlation coefficients.
 #' @param prop.consistent Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.
 #' @param prop.inconsistent Proportion of genes that are inconsistent mediators.
 #' @inheritParams ezlimma:::sim_fisher
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
 
-sim_omics <- function(b1t2=0.39, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, prop.consistent=1/ngene,
+sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
                       prop.inconsistent=0, nsim=10**3, seed=0, verbose=TRUE){
 
   stopifnot(prop.consistent >= 1/ngene, prop.inconsistent >= 0, prop.consistent <= 1, prop.inconsistent <= 1,
-            prop.consistent + prop.consistent <= 1)
+            prop.consistent + prop.consistent <= 1, diag(Sigma)==1)
+
   set.seed(seed)
   #t = theta; b = beta
   t0 <- t3 <- b0 <- b2 <- 0.14
@@ -45,10 +46,7 @@ sim_omics <- function(b1t2=0.39, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, pro
     # a is exposure
     a <- stats::rnorm(n=nsamp)
 
-    Sigma <- matrix(data=rho, nrow=ngene, ncol=ngene)
-    diag(Sigma) <- 1
     error_m <- t(MASS::mvrnorm(n=nsamp, mu = rep(0, ngene), Sigma = Sigma))
-    rm(Sigma)
 
     m <- b0 + matrix(b2*x, nrow=ngene, ncol=nsamp, byrow = TRUE) + error_m
     dimnames(m) <- list(g.nms, paste0("s", 1:nsamp))

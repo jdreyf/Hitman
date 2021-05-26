@@ -10,7 +10,7 @@ sim_omics(
   nsamp = 15,
   ngene = 100,
   FDR = 0.25,
-  rho = 0,
+  Sigma = diag(ngene),
   prop.consistent = 1/ngene,
   prop.inconsistent = 0,
   nsim = 10^3,
@@ -29,7 +29,7 @@ sim_omics(
 
 \item{FDR}{FDR threshold to apply.}
 
-\item{rho}{Inter-gene correlation coefficients.}
+\item{Sigma}{Matrix of inter-gene correlation coefficients.}
 
 \item{prop.consistent}{Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.}
 

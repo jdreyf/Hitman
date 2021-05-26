@@ -18,7 +18,7 @@ limma_pcor(
 }
 \arguments{
 \item{object}{Matrix-like data object containing log-ratios or log-expression values, with rows corresponding to 
-features (e.g. genes) and columns to samples. Must have rownames that are non-duplicated and non-empty.}
+features (e.g. genes) and columns to samples. Must have row names that are non-duplicated and non-empty.}
 
 \item{phenotype}{Numeric vector of sample characteristics (e.g. phenotypes or treatments). 
 Should be same length as \code{ncol(object)}.}
