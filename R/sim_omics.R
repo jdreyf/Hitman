@@ -40,7 +40,9 @@ sim_omics <- function(b1t2=0.39, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, pro
     inconsistent_genes <- sample(setdiff(g.nms, consistent_genes), size=n.inconsistent)
     med_genes <- union(consistent_genes, inconsistent_genes)
 
+    # x is covariate
     x <- stats::rnorm(n=nsamp)
+    # a is exposure
     a <- stats::rnorm(n=nsamp)
 
     Sigma <- matrix(data=rho, nrow=ngene, ncol=ngene)
@@ -50,9 +52,10 @@ sim_omics <- function(b1t2=0.39, t1=5, nsamp=15, ngene=100, FDR=0.25, rho=0, pro
 
     m <- b0 + matrix(b2*x, nrow=ngene, ncol=nsamp, byrow = TRUE) + error_m
     dimnames(m) <- list(g.nms, paste0("s", 1:nsamp))
+    # contribution from exposure
     m[med_genes,] <- m[med_genes,, drop=FALSE] + b1t2*a
 
-    # eq 3; E(Y)
+    # outcome: modified by mediator genes
     y <- t0 + t1*a + t3*x + stats::rnorm(n=nsamp)
     y <- y + colSums(b1t2 * m[consistent_genes,, drop=FALSE])
     if (n.inconsistent > 0) y <- y - colSums(b1t2 * m[inconsistent_genes,, drop=FALSE])
