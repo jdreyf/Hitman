@@ -14,6 +14,7 @@ sim_omics(
   prop.consistent = 1/ngene,
   prop.inconsistent = 0,
   nsim = 10^3,
+  fdr.method = c("BH", "BY"),
   seed = 0,
   verbose = TRUE
 )
@@ -36,6 +37,9 @@ sim_omics(
 \item{prop.inconsistent}{Proportion of genes that are inconsistent mediators.}
 
 \item{nsim}{Number of simulations.}
+
+\item{fdr.method}{Character string; either "BH" for Benjamini-Hochberg or "BY" for Benjamini-Yekutieli.
+See stats::p.adjust.}
 
 \item{seed}{Random seed for reprodubility.}
 

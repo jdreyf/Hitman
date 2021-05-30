@@ -11,6 +11,7 @@ hitman(
   covariates = NULL,
   fam = "gaussian",
   reorder.rows = TRUE,
+  fdr.method = c("BH", "BY"),
   verbose = TRUE,
   check.names = TRUE
 )
@@ -31,6 +32,9 @@ to samples and columns to covariates to be adjusted for.}
 \code{"gaussian"} reduces to the usual linear regression model. See stats::family.}
 
 \item{reorder.rows}{Logical, should rows be reordered by p-value?}
+
+\item{fdr.method}{Character string; either "BH" for Benjamini-Hochberg or "BY" for Benjamini-Yekutieli.
+See stats::p.adjust.}
 
 \item{verbose}{Logical; should messages be given for lack of association between \code{E} & \code{Y} and filtering?}
 

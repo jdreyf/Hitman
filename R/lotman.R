@@ -10,7 +10,10 @@
 #' @export
 
 # need to modify limma_cor, since ezcor does not handle design
-lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
+lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, fdr.method=c("BH", "BY"), verbose=TRUE,
+                   check.names=TRUE){
+
+  fdr.method <- match.arg(fdr.method, c("BH", "BY"))
 
   if (is.null(dim(M))){
     M <- matrix(M, nrow=1, dimnames=list("analyte", names(M)))
@@ -71,7 +74,7 @@ lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, verbose=TRUE, ch
   }
 
   EMY.chisq <- stats::qchisq(p=EMY.p, df=1, lower.tail = FALSE)
-  EMY.FDR <- stats::p.adjust(EMY.p, method = "BH")
+  EMY.FDR <- stats::p.adjust(EMY.p, method = fdr.method)
 
   ret <- cbind(EMY.chisq, EMY.p, EMY.FDR, ret)
   if (reorder.rows) ret <- ret[order(ret[, "EMY.p", drop=FALSE]),]

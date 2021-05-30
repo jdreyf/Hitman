@@ -11,10 +11,13 @@
 #' @param prop.consistent Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.
 #' @param prop.inconsistent Proportion of genes that are inconsistent mediators.
 #' @inheritParams ezlimma:::sim_fisher
+#' @inheritParams hitman
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
 
 sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
-                      prop.inconsistent=0, nsim=10**3, seed=0, verbose=TRUE){
+                      prop.inconsistent=0, nsim=10**3, fdr.method=c("BH", "BY"), seed=0, verbose=TRUE){
+
+  fdr.method <- match.arg(fdr.method, c("BH", "BY"))
 
   stopifnot(prop.consistent >= 1/ngene, prop.inconsistent >= 0, prop.consistent <= 1, prop.inconsistent <= 1,
             prop.consistent + prop.consistent <= 1, diag(Sigma)==1)
@@ -60,13 +63,13 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
 
     names(a) <- names(x) <- names(y) <- paste0("s", 1:nsamp)
 
-    hm.res <- hitman(E=a, M=m, Y=y, covariates = x, verbose=TRUE)
-    lm.res <- lotman(E=a, M=m, Y=y, covariates = x, verbose = TRUE)
+    hm.res <- hitman(E=a, M=m, Y=y, covariates = x, fdr.method = fdr.method, verbose=TRUE)
+    lm.res <- lotman(E=a, M=m, Y=y, covariates = x, fdr.method = fdr.method, verbose = TRUE)
 
     js.v <- apply(m, 1, FUN=function(m.v){
       joint_signif_mediation(E=a, M=m.v, Y=y, covariates = x)
     })
-    js.res <- data.frame(p=js.v, FDR=stats::p.adjust(js.v, method="BH"))
+    js.res <- data.frame(p=js.v, FDR=stats::p.adjust(js.v, method=fdr.method))
 
     prop.sig.arr["hitman", "n.hits", sim] <- sum(hm.res$EMY.FDR < FDR)
     prop.sig.arr["hitman", "power", sim] <- mean(hm.res[consistent_genes, "EMY.FDR"] < FDR)

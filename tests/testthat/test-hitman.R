@@ -122,6 +122,12 @@ test_that("hitman more powerful than lotman for small N", {
   expect_gt(prop.sig.hit, prop.sig.lot)
 })
 
+test_that("FDR", {
+  hm <- hitman(E=ee, M=M, Y=pheno.v)
+  hm.by <- hitman(E=ee, M=M, Y=pheno.v, fdr.method = "BY")
+  expect_true(all(hm$EMY.FDR <= hm.by$EMY.FDR))
+})
+
 # takes a few sec -- worth it.
 # barfield includes a covariate, x
 # exposure (a) & x are defined independently, but when I define a=x+rnorm(.), get identical results

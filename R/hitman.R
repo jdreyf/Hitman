@@ -13,6 +13,8 @@
 #' to samples and columns to covariates to be adjusted for.
 #' @param fam Character string of family to use in generalized linear model of \code{Y}. The default
 #' \code{"gaussian"} reduces to the usual linear regression model. See stats::family.
+#' @param fdr.method Character string; either "BH" for Benjamini-Hochberg or "BY" for Benjamini-Yekutieli.
+#' See stats::p.adjust.
 #' @param verbose Logical; should messages be given for lack of association between \code{E} & \code{Y} and filtering?
 #' @param check.names Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?
 #' @inheritParams ezlimma::ezcor
@@ -33,8 +35,10 @@
 #' Larger chi-square values are more significant.
 #' @export
 
-hitman <- function(E, M, Y, covariates=NULL, fam= "gaussian", reorder.rows=TRUE, verbose=TRUE, check.names=TRUE){
+hitman <- function(E, M, Y, covariates=NULL, fam= "gaussian", reorder.rows=TRUE, fdr.method=c("BH", "BY"),
+                   verbose=TRUE, check.names=TRUE){
 
+  fdr.method <- match.arg(fdr.method, c("BH", "BY"))
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
             stats::var(E) > 0, length(E)==ncol(M), length(Y)==ncol(M), !is.null(rownames(M)), !is.null(colnames(M)),
             length(unique(Y)) >= 3 || fam == "binomial", nrow(M) > 1)
@@ -107,7 +111,7 @@ hitman <- function(E, M, Y, covariates=NULL, fam= "gaussian", reorder.rows=TRUE,
   }
 
   EMY.chisq <- stats::qchisq(p=EMY.p, df=1, lower.tail = FALSE)
-  EMY.FDR <- stats::p.adjust(EMY.p, method = "BH")
+  EMY.FDR <- stats::p.adjust(EMY.p, method = fdr.method)
 
   ret <- cbind(EMY.chisq, EMY.p, EMY.FDR, ret)
   if (reorder.rows) ret <- ret[order(ret$EMY.p),]
