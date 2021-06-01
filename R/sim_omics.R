@@ -29,16 +29,19 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
   n.consistent <- round(prop.consistent*ngene)
   n.inconsistent <- round(prop.inconsistent*ngene)
 
+  cnms <- c("n.hits", "power", "false_disc", "fdr")
+
   if (n.inconsistent > 0){
-    prop.sig.arr <- array(NA, dim=c(4, 3, nsim),
-                          dimnames=list(c("hitman", "lotman", "js", "js_both"), c("n.hits", "power", "false_disc"), paste0("sim_", 1:nsim)))
+    prop.sig.arr <- array(NA, dim=c(4, length(cnms), nsim),
+                          dimnames=list(c("hitman", "lotman", "js", "js_both"), cnms, paste0("sim_", 1:nsim)))
   } else {
-    prop.sig.arr <- array(NA, dim=c(3, 3, nsim),
-                          dimnames=list(c("hitman", "lotman", "js"), c("n.hits", "power", "false_disc"), paste0("sim_", 1:nsim)))
+    prop.sig.arr <- array(NA, dim=c(3, length(cnms), nsim),
+                          dimnames=list(c("hitman", "lotman", "js"), cnms, paste0("sim_", 1:nsim)))
   }
 
+  g.nms <- paste0("gene", 1:ngene)
+
   for (sim in 1:nsim){
-    g.nms <- paste0("gene", 1:ngene)
     consistent_genes <- sample(g.nms, size=n.consistent)
     # returns character(0) if n.inconsistent=0
     inconsistent_genes <- sample(setdiff(g.nms, consistent_genes), size=n.inconsistent)
@@ -95,8 +98,9 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
 
     if (verbose && sim %% 100 == 0) message("sim: ", sim)
   }
+  fdr.mat <- prop.sig.arr[,"false_disc",, drop=TRUE]/prop.sig.arr[,"n.hits",, drop=TRUE]
+  fdr.mat[is.na(fdr.mat)] <- 0
+  prop.sig.arr[, "fdr",] <- fdr.mat
   ret <- data.frame(apply(prop.sig.arr, 1:2, FUN=mean))
-  ret$fdr <- as.numeric(apply(prop.sig.arr[,"false_disc",, drop=FALSE], c(1, 2), FUN=sum)/
-    apply(prop.sig.arr[,"n.hits",, drop=FALSE], 1:2, FUN=sum))
   ret
 }
