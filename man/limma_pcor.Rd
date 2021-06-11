@@ -50,5 +50,6 @@ Data frame.
 Test partial correlation of each row of an object to a phenotype vector given covariates.
 }
 \details{
-\code{covariates} should not include the regression intercept.
+\code{covariates} should not include the regression intercept, but when called from \code{hitman},
+it should include the exposure.
 }
