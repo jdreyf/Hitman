@@ -13,6 +13,7 @@
 #' @inheritParams ezlimma:::sim_fisher
 #' @inheritParams hitman
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
+#' @export
 
 sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
                       prop.inconsistent=0, nsim=10**3, fdr.method=c("BH", "BY"), seed=0, verbose=TRUE){

@@ -3,3 +3,4 @@
 export(hitman)
 export(lotman)
 export(sim_barfield)
+export(sim_omics)
