@@ -24,16 +24,14 @@ limma_pcor <- function(object, phenotype, covariates, fam="gaussian", reorder.ro
   names(pheno.res) <- names(phenotype)
 
   # object residuals; removed as per supplemental text
-  # removeBatchEffects doesn't have an intercept
-  # object.res <- limma::removeBatchEffect(x=object, covariates = covariates)
-  # can't use removeBatchEffects with design=NULL, so using some code here
+  # i can't use limma::removeBatchEffects with design=NULL, so using some of its code here
   covar.mat <- cbind(int=rep(1, ncol(object)), covariates)
   fit <- limma::lmFit(object, design = covar.mat)
   beta <- fit$coefficients
   beta[is.na(beta)] <- 0
   object.res <- as.matrix(object) - beta %*% t(covar.mat)
 
-  # how many df to remove in limma_cor? number of covariates corrected with rmBatchEffect.
+  # how many df to remove in limma_cor? number of covariates in covar.mat
   reduce.df <- ncol(covar.mat)
 
   # need intercept b/c object.res not centered at 0
