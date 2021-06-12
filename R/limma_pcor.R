@@ -1,11 +1,15 @@
 #' Test partial correlation of each row of an object to a phenotype vector
 #'
-#' Test partial correlation of each row of an object to a phenotype vector given covariates.
+#' Test partial correlation of each row of an object to a phenotype vector given covariates. The
+#' approach here is to estimate the residuals of regressing each of \code{object} and \code{phenotype}
+#' on \code{cbind(1, covariates)}, and then to test the correlation of the residuals, with the appropriate
+#' degrees of freedom. Estimating the residuals corresponding to \code{object} is analogous to
+#' \link[limma]{removeBatchEffect}, and several lines of code are adapted from that function.
 #'
 #' @inheritParams ezlimma::limma_cor
 #' @inheritParams hitman
 #' @inheritParams ezlimma::limma_contrasts
-#' @details \code{covariates} should not include the regression intercept, but when called from \code{hitman},
+#' @details \code{covariates} should not include the regression intercept, but when called from \link{hitman},
 #' it should include the exposure.
 #' @return Data frame.
 
