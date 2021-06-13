@@ -41,7 +41,7 @@ limma_pcor <- function(object, phenotype, covariates, fam="gaussian", reorder.ro
   # how many df to remove in limma_cor? number of covariates in covar.mat
   reduce.df <- ncol(covar.mat)
 
-  # need intercept b/c object.res not centered at 0
+  # already accounted for intercept
   des <- stats::model.matrix(~0+pheno.res)
   lc <- ezlimma::limma_cor(object=object.res, design = des, reduce.df=reduce.df, coef = 1, reorder.rows=reorder.rows,
                            prefix=prefix, adjust.method=adjust.method, cols=cols)
