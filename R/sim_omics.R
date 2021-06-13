@@ -21,7 +21,7 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))
 
   stopifnot(prop.consistent >= 1/ngene, prop.inconsistent >= 0, prop.consistent <= 1, prop.inconsistent <= 1,
-            prop.consistent + prop.consistent <= 1, diag(Sigma)==1)
+            prop.consistent + prop.consistent <= 1)
 
   set.seed(seed)
   #t = theta; b = beta
