@@ -10,18 +10,19 @@
 #' @param Sigma Matrix of inter-gene correlation coefficients.
 #' @param prop.consistent Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.
 #' @param prop.inconsistent Proportion of genes that are inconsistent mediators.
+#' @param prop.1c Proportion of genes where exactly one component of the test (E --> M or M --> Y given E) holds.
 #' @inheritParams ezlimma:::sim_fisher
 #' @inheritParams hitman
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
 #' @export
 
 sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
-                      prop.inconsistent=0, nsim=10**3, fdr.method=c("BH", "BY"), seed=0, verbose=TRUE){
+                      prop.inconsistent=0, prop.1c=0, nsim=10**3, fdr.method=c("BH", "BY"), seed=0, verbose=TRUE){
 
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))
 
   stopifnot(prop.consistent >= 1/ngene, prop.inconsistent >= 0, prop.consistent <= 1, prop.inconsistent <= 1,
-            prop.consistent + prop.consistent <= 1)
+            prop.consistent + prop.consistent + prop.1c <= 1, prop.1c >= 0)
 
   set.seed(seed)
   #t = theta; b = beta
@@ -47,6 +48,9 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
     # returns character(0) if n.inconsistent=0
     inconsistent_genes <- sample(setdiff(g.nms, consistent_genes), size=n.inconsistent)
     med_genes <- union(consistent_genes, inconsistent_genes)
+    # one component genes
+    one_comp_genes_em <- sample(x=setdiff(g.nms, med_genes), size=ceiling(prop.1c*ngene/2))
+    one_comp_genes_my <- sample(setdiff(g.nms, union(med_genes, one_comp_genes_em)), size=floor(prop.1c*ngene/2))
 
     # x is covariate
     x <- stats::rnorm(n=nsamp)
@@ -59,10 +63,12 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
     dimnames(m) <- list(g.nms, paste0("s", 1:nsamp))
     # contribution from exposure
     m[med_genes,] <- m[med_genes,, drop=FALSE] + b1t2*a
+    if (length(one_comp_genes_em) > 0) m[one_comp_genes_em,] <- m[one_comp_genes_em,, drop=FALSE] + b1t2*a
 
     # outcome: modified by mediator genes
     y <- t0 + t1*a + t3*x + stats::rnorm(n=nsamp)
     y <- y + colSums(b1t2 * m[consistent_genes,, drop=FALSE])
+    if (length(one_comp_genes_my) > 0) y <- y + colSums(b1t2 * m[one_comp_genes_my,, drop=FALSE])
     if (n.inconsistent > 0) y <- y - colSums(b1t2 * m[inconsistent_genes,, drop=FALSE])
 
     names(a) <- names(x) <- names(y) <- paste0("s", 1:nsamp)

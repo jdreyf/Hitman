@@ -13,6 +13,7 @@ sim_omics(
   Sigma = diag(ngene),
   prop.consistent = 1/ngene,
   prop.inconsistent = 0,
+  prop.1c = 0,
   nsim = 10^3,
   fdr.method = c("BH", "BY"),
   seed = 0,
@@ -35,6 +36,8 @@ sim_omics(
 \item{prop.consistent}{Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.}
 
 \item{prop.inconsistent}{Proportion of genes that are inconsistent mediators.}
+
+\item{prop.1c}{Proportion of genes where exactly one component of the test (E --> M or M --> Y given E) holds.}
 
 \item{nsim}{Number of simulations.}
 
