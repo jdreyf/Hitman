@@ -70,8 +70,8 @@ hitman <- function(E, M, Y, covariates=NULL, fam= "gaussian", reorder.rows=TRUE,
     tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "z value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|z|)"])
   }
 
-  if (tt.ey["EY.p"] > 0.1 && verbose){
-    message("E and Y are not associated at p<0.1, so mediation may not be meaningful.")
+  if (tt.ey["EY.p"] > 0.05 && verbose){
+    message("E and Y are not associated at p<0.05, so mediation may not be meaningful.")
   }
   ey.sign <- sign(tt.ey["EY.t"])
 
