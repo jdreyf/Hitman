@@ -62,22 +62,22 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
     m <- b0 + matrix(b2*x, nrow=ngene, ncol=nsamp, byrow = TRUE) + error_m
     dimnames(m) <- list(g.nms, paste0("s", 1:nsamp))
     # contribution from exposure
-    m[med_genes,] <- m[med_genes,, drop=FALSE] + b1t2*a
+    m[med_genes,] <- m[med_genes,, drop=FALSE] + matrix(b1t2*a, nrow=length(med_genes), ncol=nsamp, byrow = TRUE)
     if (length(one_comp_genes_em) > 0){
       em.sgns <- sample(x=c(-1, 1), size=length(one_comp_genes_em), replace = TRUE, prob=rep(0.5, 2))
       if (any(em.sgns == -1)){
         g.tmp <- one_comp_genes_em[em.sgns == -1]
-        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - b1t2*a
+        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - matrix(b1t2*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
+          b1t2*a
       }
       if (any(em.sgns == 1)){
         g.tmp <- one_comp_genes_em[em.sgns == 1]
-        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - b1t2*a
+        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - matrix(b1t2*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
       }
     }
 
     # outcome: modified by mediator genes
-    y <- t0 + t1*a + t3*x + stats::rnorm(n=nsamp)
-    y <- y + colSums(b1t2 * m[consistent_genes,, drop=FALSE])
+    y <- t0 + t1*a + t3*x + stats::rnorm(n=nsamp) + colSums(b1t2 * m[consistent_genes,, drop=FALSE])
 
     if (length(one_comp_genes_my) > 0){
       my.sgns <- sample(x=c(-1, 1), size=length(one_comp_genes_my), replace = TRUE, prob=rep(0.5, 2))

@@ -30,7 +30,8 @@ lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, fdr.method=c("BH
   fm.ey <- stats::lm(Y ~ ., data=data.frame(Y, my.covar))
   tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "t value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|t|)"])
   if (tt.ey["EY.p"] > 0.05 && verbose){
-    message("E and Y are not associated at p<0.05, so mediation may not be meaningful.")
+    message("E and Y are not associated at p<0.05 (p=", signif(tt.ey["EY.p"], digits = 2),
+            "), so mediation may not be meaningful.")
   }
   ey.sign <- sign(tt.ey["EY.t"])
 
