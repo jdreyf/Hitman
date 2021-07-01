@@ -113,10 +113,10 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
     prop.sig.arr["lotman", "false_disc", sim] <-
       sum(lm.res[setdiff(g.nms, consistent_genes), "EMY.FDR"] < FDR)
 
-    prop.sig.arr["js", "n.hits", sim] <- sum(js.res[, "FDR"] < FDR)
-    prop.sig.arr["js", "power", sim] <- mean(js.res[consistent_genes, "FDR"] < FDR)
+    prop.sig.arr["js", "n.hits", sim] <- sum(js.res[, "EMY.FDR"] < FDR)
+    prop.sig.arr["js", "power", sim] <- mean(js.res[consistent_genes, "EMY.FDR"] < FDR)
     prop.sig.arr["js", "false_disc", sim] <-
-      sum(js.res[setdiff(g.nms, consistent_genes), "FDR"] < FDR)
+      sum(js.res[setdiff(g.nms, consistent_genes), "EMY.FDR"] < FDR)
 
     if (n.inconsistent > 0){
       prop.sig.arr["js_both", "n.hits", sim] <- sum(js.res[, "FDR"] < FDR)

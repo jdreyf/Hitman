@@ -2,14 +2,14 @@
 % Please edit documentation in R/joint_signif_mediation.R
 \name{joint_signif_mediation}
 \alias{joint_signif_mediation}
-\title{Joint Significant mediation test}
+\title{Joint significant mediation test}
 \usage{
 joint_signif_mediation(E, M, Y, covariates = NULL)
 }
 \arguments{
 \item{E}{A numeric vector of exposures.}
 
-\item{M}{A numeric vector of mediators with one element per sample.}
+\item{M}{Numeric vector of mediators with one element per sample.}
 
 \item{Y}{A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
 currently supported.}
@@ -18,10 +18,10 @@ currently supported.}
 to samples and columns to covariates to be adjusted for.}
 }
 \value{
-p-value.
+Numeric vector of p-values whose names match \code{hitman} and \code{lotman}.
 }
 \description{
-Joint Significant mediation test.
+Joint significant mediation test.
 }
 \details{
 \code{E} and \code{Y} cannot have \code{NA}s.

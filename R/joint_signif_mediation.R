@@ -2,9 +2,9 @@
 #'
 #' Joint significant mediation test.
 #'
-#' @param M A numeric vector of mediators with one element per sample.
+#' @param M Numeric vector of mediators with one element per sample.
 #' @inheritParams hitman
-#' @return p-value.
+#' @return Numeric vector of p-values whose names match \code{hitman} and \code{lotman}.
 #' @details \code{E} and \code{Y} cannot have \code{NA}s.
 #' @seealso \url{https://github.com/cedricbatailler/JSmediation}.
 
