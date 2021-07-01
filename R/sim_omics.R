@@ -98,8 +98,8 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
     hm.res <- hitman(E=a, M=m, Y=y, covariates = x, fdr.method = fdr.method, verbose=TRUE)
     lm.res <- lotman(E=a, M=m, Y=y, covariates = x, fdr.method = fdr.method, verbose = TRUE)
 
-    js.v <- apply(m, 1, FUN=function(m.v){
-      joint_signif_mediation(E=a, M=m.v, Y=y, covariates = x)
+    js.v <- apply(m, MARGIN=1, FUN=function(m.v){
+      joint_signif_mediation(E=a, M=m.v, Y=y, covariates = x)[1, "EMY.p"]
     })
     js.res <- data.frame(p=js.v, FDR=stats::p.adjust(js.v, method=fdr.method))
 

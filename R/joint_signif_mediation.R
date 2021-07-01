@@ -1,6 +1,6 @@
-#' Joint Significant mediation test
+#' Joint significant mediation test
 #'
-#' Joint Significant mediation test.
+#' Joint significant mediation test.
 #'
 #' @param M A numeric vector of mediators with one element per sample.
 #' @inheritParams hitman
@@ -24,6 +24,7 @@ joint_signif_mediation <- function(E, M, Y, covariates=NULL){
   }
   em.p <- em.fm$coefficients["E", "Pr(>|t|)"]
   my.p <- my.fm$coefficients["M", "Pr(>|t|)"]
-  ret.p <- matrix(max(em.p, my.p), nrow=1, ncol=1, dimnames = list("row1", "EMY.p"))
+  # ret.p <- matrix(max(em.p, my.p), nrow=1, ncol=1, dimnames = list("row1", "EMY.p"))
+  ret.p <- matrix(c(max(em.p, my.p), em.p, my.p), nrow=1, dimnames=list("row1", c("EMY.p", "EM.p", "MY.p")))
   return(ret.p)
 }
