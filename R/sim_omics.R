@@ -12,13 +12,14 @@
 #' @param prop.consistent Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.
 #' @param prop.inconsistent Proportion of genes that are inconsistent mediators.
 #' @param prop.1c Proportion of genes where exactly one component of the test (E --> M or M --> Y given E) holds.
+#' @param sd.mn Numeric standard deviation of measurement variance.
 #' @inheritParams ezlimma:::sim_fisher
 #' @inheritParams hitman
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
 #' @export
 
 sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
-                      prop.inconsistent=0, prop.1c=0, nsim=10**3, fdr.method=c("BH", "BY"), seed=0, verbose=TRUE){
+                      prop.inconsistent=0, prop.1c=0, sd.mn=0.5, nsim=10**3, fdr.method=c("BH", "BY"), seed=0, verbose=TRUE){
 
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))
 
@@ -53,31 +54,30 @@ sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=di
     one_comp_genes_em <- sample(x=setdiff(g.nms, med_genes), size=ceiling(prop.1c*ngene/2))
     one_comp_genes_my <- sample(setdiff(g.nms, union(med_genes, one_comp_genes_em)), size=floor(prop.1c*ngene/2))
 
-    # x is covariate
-    # x <- stats::rnorm(n=nsamp)
     # a is exposure
     a <- stats::rnorm(n=nsamp)
 
-    error_m <- t(MASS::mvrnorm(n=nsamp, mu = rep(0, ngene), Sigma = Sigma))
-
-    m <- b0 + error_m
-    dimnames(m) <- list(g.nms, paste0("s", 1:nsamp))
+    # signal variance in M
+    m_signal_var <- t(MASS::mvrnorm(n=nsamp, mu = rep(0, ngene), Sigma = Sigma))
+    m_signal <- b0 + m_signal_var
+    dimnames(m_signal) <- dimnames(m_signal_var) <- list(g.nms, paste0("s", 1:nsamp))
     # contribution from exposure
-    m[med_genes,] <- m[med_genes,, drop=FALSE] + matrix(b1*a, nrow=length(med_genes), ncol=nsamp, byrow = TRUE)
+    m_signal[med_genes,] <- m_signal[med_genes,, drop=FALSE] + matrix(b1*a, nrow=length(med_genes), ncol=nsamp, byrow = TRUE)
     if (length(one_comp_genes_em) > 0){
       em.sgns <- sample(x=c(-1, 1), size=length(one_comp_genes_em), replace = TRUE, prob=rep(0.5, 2))
       if (any(em.sgns == -1)){
         g.tmp <- one_comp_genes_em[em.sgns == -1]
-        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - matrix(b1*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
+        m_signal[g.tmp,] <- m_signal[g.tmp,, drop=FALSE] - matrix(b1*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
       }
       if (any(em.sgns == 1)){
         g.tmp <- one_comp_genes_em[em.sgns == 1]
-        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - matrix(b1*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
+        m_signal[g.tmp,] <- m_signal[g.tmp,, drop=FALSE] - matrix(b1*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
       }
     }
+    m <- m_signal + t(MASS::mvrnorm(n=nsamp, mu = rep(0, ngene), Sigma=sd.mn*diag(ngene)))
 
     # outcome: modified by mediator genes
-    y <- t0 + t1*a + stats::rnorm(n=nsamp) + colSums(t2 * m[consistent_genes,, drop=FALSE])
+    y <- t0 + t1*a + stats::rnorm(n=nsamp) + colSums(t2 * m_signal[consistent_genes,, drop=FALSE])
 
     if (length(one_comp_genes_my) > 0){
       my.sgns <- sample(x=c(-1, 1), size=length(one_comp_genes_my), replace = TRUE, prob=rep(0.5, 2))
@@ -87,7 +87,7 @@ sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=di
       }
       if (any(my.sgns == 1)){
         g.tmp <- one_comp_genes_my[my.sgns == 1]
-        y <- y + colSums(t2 * m[g.tmp,, drop=FALSE])
+        y <- y + colSums(t2 * m_signal[g.tmp,, drop=FALSE])
       }
     }
 
