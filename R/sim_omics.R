@@ -126,7 +126,7 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
     }
 
     if (verbose && sim %% 100 == 0) message("sim: ", sim)
-  }
+  } # end for sim
   fdr.mat <- prop.sig.arr[,"false_disc",, drop=TRUE]/prop.sig.arr[,"n.hits",, drop=TRUE]
   fdr.mat[is.na(fdr.mat)] <- 0
   prop.sig.arr[, "fdr",] <- fdr.mat
