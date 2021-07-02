@@ -5,7 +5,8 @@
 \title{Simulate & test mediation methods on omics dataset}
 \usage{
 sim_omics(
-  b1t2 = 1,
+  b1 = 1,
+  t2 = b1,
   t1 = 5,
   nsamp = 15,
   ngene = 100,
@@ -21,17 +22,19 @@ sim_omics(
 )
 }
 \arguments{
-\item{b1t2}{Numeric value that both theta2 (\code{"t2"}) and beta1 (\code{"b1"}) take for non-null mediators.}
+\item{b1}{Numeric value that beta1 (\code{"b1"}), the EM coefficient, takes for non-null mediators.}
 
-\item{t1}{Numeric value of theta2 i.e. the effect of the exposure on the outcome.}
+\item{t2}{Numeric value that theta2 (\code{"t2"}), the MY coefficient, takes for non-null mediators.}
+
+\item{t1}{Numeric value of theta1 i.e. the effect of the exposure on the outcome.}
 
 \item{nsamp}{Number of samples.}
 
-\item{ngene}{Number of genes other than that of primary interest to simulate.}
+\item{ngene}{Number of genes.}
 
 \item{FDR}{FDR threshold to apply.}
 
-\item{Sigma}{Matrix of inter-gene correlation coefficients.}
+\item{Sigma}{Gene covariance matrix.}
 
 \item{prop.consistent}{Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.}
 

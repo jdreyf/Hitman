@@ -2,12 +2,13 @@
 #'
 #' Simulate & test mediation methods on omics dataset.
 #'
-#' @param b1t2 Numeric value that both theta2 (\code{"t2"}) and beta1 (\code{"b1"}) take for non-null mediators.
-#' @param t1 Numeric value of theta2 i.e. the effect of the exposure on the outcome.
+#' @param b1 Numeric value that beta1 (\code{"b1"}), the EM coefficient, takes for non-null mediators.
+#' @param t2 Numeric value that theta2 (\code{"t2"}), the MY coefficient, takes for non-null mediators.
+#' @param t1 Numeric value of theta1 i.e. the effect of the exposure on the outcome.
 #' @param nsamp Number of samples.
-#' @param ngene Number of genes other than that of primary interest to simulate.
+#' @param ngene Number of genes.
 #' @param FDR FDR threshold to apply.
-#' @param Sigma Matrix of inter-gene correlation coefficients.
+#' @param Sigma Gene covariance matrix.
 #' @param prop.consistent Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.
 #' @param prop.inconsistent Proportion of genes that are inconsistent mediators.
 #' @param prop.1c Proportion of genes where exactly one component of the test (E --> M or M --> Y given E) holds.
@@ -16,7 +17,7 @@
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
 #' @export
 
-sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
+sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
                       prop.inconsistent=0, prop.1c=0, nsim=10**3, fdr.method=c("BH", "BY"), seed=0, verbose=TRUE){
 
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))
@@ -26,7 +27,7 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
 
   set.seed(seed)
   #t = theta; b = beta
-  t0 <- t3 <- b0 <- b2 <- 0.14
+  t0 <- b0 <- b2 <- 0.14
 
   n.consistent <- round(prop.consistent*ngene)
   n.inconsistent <- round(prop.inconsistent*ngene)
@@ -53,53 +54,52 @@ sim_omics <- function(b1t2=1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ng
     one_comp_genes_my <- sample(setdiff(g.nms, union(med_genes, one_comp_genes_em)), size=floor(prop.1c*ngene/2))
 
     # x is covariate
-    x <- stats::rnorm(n=nsamp)
+    # x <- stats::rnorm(n=nsamp)
     # a is exposure
     a <- stats::rnorm(n=nsamp)
 
     error_m <- t(MASS::mvrnorm(n=nsamp, mu = rep(0, ngene), Sigma = Sigma))
 
-    m <- b0 + matrix(b2*x, nrow=ngene, ncol=nsamp, byrow = TRUE) + error_m
+    m <- b0 + error_m
     dimnames(m) <- list(g.nms, paste0("s", 1:nsamp))
     # contribution from exposure
-    m[med_genes,] <- m[med_genes,, drop=FALSE] + matrix(b1t2*a, nrow=length(med_genes), ncol=nsamp, byrow = TRUE)
+    m[med_genes,] <- m[med_genes,, drop=FALSE] + matrix(b1*a, nrow=length(med_genes), ncol=nsamp, byrow = TRUE)
     if (length(one_comp_genes_em) > 0){
       em.sgns <- sample(x=c(-1, 1), size=length(one_comp_genes_em), replace = TRUE, prob=rep(0.5, 2))
       if (any(em.sgns == -1)){
         g.tmp <- one_comp_genes_em[em.sgns == -1]
-        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - matrix(b1t2*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
-          b1t2*a
+        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - matrix(b1*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
       }
       if (any(em.sgns == 1)){
         g.tmp <- one_comp_genes_em[em.sgns == 1]
-        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - matrix(b1t2*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
+        m[g.tmp,] <- m[g.tmp,, drop=FALSE] - matrix(b1*a, nrow=length(g.tmp), ncol=nsamp, byrow = TRUE)
       }
     }
 
     # outcome: modified by mediator genes
-    y <- t0 + t1*a + t3*x + stats::rnorm(n=nsamp) + colSums(b1t2 * m[consistent_genes,, drop=FALSE])
+    y <- t0 + t1*a + stats::rnorm(n=nsamp) + colSums(t2 * m[consistent_genes,, drop=FALSE])
 
     if (length(one_comp_genes_my) > 0){
       my.sgns <- sample(x=c(-1, 1), size=length(one_comp_genes_my), replace = TRUE, prob=rep(0.5, 2))
       if (any(my.sgns == -1)){
         g.tmp <- one_comp_genes_my[my.sgns == -1]
-        y <- y - colSums(b1t2 * m[g.tmp,, drop=FALSE])
+        y <- y - colSums(t2 * m[g.tmp,, drop=FALSE])
       }
       if (any(my.sgns == 1)){
         g.tmp <- one_comp_genes_my[my.sgns == 1]
-        y <- y + colSums(b1t2 * m[g.tmp,, drop=FALSE])
+        y <- y + colSums(t2 * m[g.tmp,, drop=FALSE])
       }
     }
 
-    if (n.inconsistent > 0) y <- y - colSums(b1t2 * m[inconsistent_genes,, drop=FALSE])
+    if (n.inconsistent > 0) y <- y - colSums(t2 * m[inconsistent_genes,, drop=FALSE])
 
-    names(a) <- names(x) <- names(y) <- paste0("s", 1:nsamp)
+    names(a) <- names(y) <- paste0("s", 1:nsamp)
 
-    hm.res <- hitman(E=a, M=m, Y=y, covariates = x, fdr.method = fdr.method, verbose=TRUE)
-    lm.res <- lotman(E=a, M=m, Y=y, covariates = x, fdr.method = fdr.method, verbose = TRUE)
+    hm.res <- hitman(E=a, M=m, Y=y, fdr.method = fdr.method, verbose=TRUE)
+    lm.res <- lotman(E=a, M=m, Y=y, fdr.method = fdr.method, verbose = TRUE)
 
     js.v <- apply(m, MARGIN=1, FUN=function(m.v){
-      joint_signif_mediation(E=a, M=m.v, Y=y, covariates = x)[1, "EMY.p"]
+      joint_signif_mediation(E=a, M=m.v, Y=y)[1, "EMY.p"]
     })
     js.res <- data.frame(p=js.v, FDR=stats::p.adjust(js.v, method=fdr.method))
 
