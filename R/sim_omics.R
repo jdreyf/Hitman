@@ -12,7 +12,7 @@
 #' @param prop.consistent Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.
 #' @param prop.inconsistent Proportion of genes that are inconsistent mediators.
 #' @param prop.1c Proportion of genes where exactly one component of the test (E --> M or M --> Y given E) holds.
-#' @param sd.mn Numeric standard deviation of measurement variance.
+#' @param sd.mn Numeric standard deviation of measurement noise.
 #' @inheritParams ezlimma:::sim_fisher
 #' @inheritParams hitman
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
