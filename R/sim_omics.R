@@ -28,7 +28,7 @@ sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=di
 
   set.seed(seed)
   #t = theta; b = beta
-  t0 <- b0 <- b2 <- 0.14
+  t0 <- b0 <- b2 <- t3 <- 0.14
 
   n.consistent <- round(prop.consistent*ngene)
   n.inconsistent <- round(prop.inconsistent*ngene)
@@ -56,10 +56,12 @@ sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=di
 
     # a is exposure
     a <- stats::rnorm(n=nsamp)
+    # x is covariate
+    x <- stats::rnorm(n=nsamp)
 
     # signal variance in M
     m_signal_var <- t(MASS::mvrnorm(n=nsamp, mu = rep(0, ngene), Sigma = Sigma))
-    m_signal <- b0 + m_signal_var
+    m_signal <- b0 + m_signal_var + matrix(b2*x, nrow=ngene, ncol=nsamp, byrow = TRUE)
     dimnames(m_signal) <- dimnames(m_signal_var) <- list(g.nms, paste0("s", 1:nsamp))
     # contribution from exposure
     m_signal[med_genes,] <- m_signal[med_genes,, drop=FALSE] + matrix(b1*a, nrow=length(med_genes), ncol=nsamp, byrow = TRUE)
@@ -77,7 +79,7 @@ sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=di
     m <- m_signal + t(MASS::mvrnorm(n=nsamp, mu = rep(0, ngene), Sigma=sd.mn*diag(ngene)))
 
     # outcome: modified by mediator genes
-    y <- t0 + t1*a + stats::rnorm(n=nsamp) + colSums(t2 * m_signal[consistent_genes,, drop=FALSE])
+    y <- t0 + t1*a + t3*x + stats::rnorm(n=nsamp) + colSums(t2 * m_signal[consistent_genes,, drop=FALSE])
 
     if (length(one_comp_genes_my) > 0){
       my.sgns <- sample(x=c(-1, 1), size=length(one_comp_genes_my), replace = TRUE, prob=rep(0.5, 2))
@@ -93,13 +95,13 @@ sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=di
 
     if (n.inconsistent > 0) y <- y - colSums(t2 * m[inconsistent_genes,, drop=FALSE])
 
-    names(a) <- names(y) <- paste0("s", 1:nsamp)
+    names(a) <- names(x) <- names(y) <- paste0("s", 1:nsamp)
 
-    hm.res <- hitman(E=a, M=m, Y=y, fdr.method = fdr.method, verbose=TRUE)
-    lm.res <- lotman(E=a, M=m, Y=y, fdr.method = fdr.method, verbose = TRUE)
+    hm.res <- hitman(E=a, M=m, Y=y, covariates = x, fdr.method = fdr.method, verbose=TRUE)
+    lm.res <- lotman(E=a, M=m, Y=y, covariates = x, fdr.method = fdr.method, verbose = TRUE)
 
     js.v <- apply(m, MARGIN=1, FUN=function(m.v){
-      joint_signif_mediation(E=a, M=m.v, Y=y)[1, "EMY.p"]
+      joint_signif_mediation(E=a, M=m.v, Y=y, covariates = x)[1, "EMY.p"]
     })
     js.res <- data.frame(p=js.v, FDR=stats::p.adjust(js.v, method=fdr.method))
 
