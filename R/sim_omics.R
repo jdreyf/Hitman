@@ -19,8 +19,8 @@
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
 #' @export
 
-sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
-                      prop.inconsistent=0, prop.em=0, prop.my=0, sd.mn=0.5, nsim=10**3, fdr.method=c("BH", "BY"), seed=0,
+sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=50, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
+                      prop.inconsistent=0, prop.em=0, prop.my=0, sd.mn=0, nsim=10**3, fdr.method=c("BH", "BY"), seed=0,
                       verbose=TRUE){
 
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))

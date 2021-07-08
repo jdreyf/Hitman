@@ -8,14 +8,15 @@ sim_omics(
   b1 = 1,
   t2 = b1,
   t1 = 5,
-  nsamp = 15,
+  nsamp = 50,
   ngene = 100,
   FDR = 0.25,
   Sigma = diag(ngene),
   prop.consistent = 1/ngene,
   prop.inconsistent = 0,
-  prop.1c = 0,
-  sd.mn = 0.5,
+  prop.em = 0,
+  prop.my = 0,
+  sd.mn = 0,
   nsim = 10^3,
   fdr.method = c("BH", "BY"),
   seed = 0,
@@ -41,7 +42,9 @@ sim_omics(
 
 \item{prop.inconsistent}{Proportion of genes that are inconsistent mediators.}
 
-\item{prop.1c}{Proportion of genes where exactly one component of the test (E --> M or M --> Y given E) holds.}
+\item{prop.em}{Proportion of genes where E --> M but not M --> Y given E.}
+
+\item{prop.my}{Proportion of genes where M --> Y given E but not E --> M.}
 
 \item{sd.mn}{Numeric standard deviation of measurement noise.}
 
