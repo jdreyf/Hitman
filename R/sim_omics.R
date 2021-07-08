@@ -11,7 +11,8 @@
 #' @param Sigma Gene covariance matrix.
 #' @param prop.consistent Proportion of genes that are consistent mediators. Must be at least \code{1/ngene}.
 #' @param prop.inconsistent Proportion of genes that are inconsistent mediators.
-#' @param prop.1c Proportion of genes where exactly one component of the test (E --> M or M --> Y given E) holds.
+#' @param prop.em Proportion of genes where E --> M but not M --> Y given E.
+#' @param prop.my Proportion of genes where M --> Y given E but not E --> M.
 #' @param sd.mn Numeric standard deviation of measurement noise.
 #' @inheritParams ezlimma:::sim_fisher
 #' @inheritParams hitman
@@ -19,12 +20,13 @@
 #' @export
 
 sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=diag(ngene), prop.consistent=1/ngene,
-                      prop.inconsistent=0, prop.1c=0, sd.mn=0.5, nsim=10**3, fdr.method=c("BH", "BY"), seed=0, verbose=TRUE){
+                      prop.inconsistent=0, prop.em=0, prop.my=0, sd.mn=0.5, nsim=10**3, fdr.method=c("BH", "BY"), seed=0,
+                      verbose=TRUE){
 
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))
 
   stopifnot(prop.consistent >= 1/ngene, prop.inconsistent >= 0, prop.consistent <= 1, prop.inconsistent <= 1,
-            prop.consistent + prop.consistent + prop.1c <= 1, prop.1c >= 0)
+            prop.consistent + prop.consistent + prop.em + prop.my <= 1, prop.em >= 0, prop.my >= 0)
 
   set.seed(seed)
   #t = theta; b = beta
@@ -51,8 +53,8 @@ sim_omics <- function(b1=1, t2=b1, t1=5, nsamp=15, ngene=100, FDR=0.25, Sigma=di
     inconsistent_genes <- sample(setdiff(g.nms, consistent_genes), size=n.inconsistent)
     med_genes <- union(consistent_genes, inconsistent_genes)
     # one component genes
-    one_comp_genes_em <- sample(x=setdiff(g.nms, med_genes), size=ceiling(prop.1c*ngene/2))
-    one_comp_genes_my <- sample(setdiff(g.nms, union(med_genes, one_comp_genes_em)), size=floor(prop.1c*ngene/2))
+    one_comp_genes_em <- sample(x=setdiff(g.nms, med_genes), size=floor(prop.em*ngene))
+    one_comp_genes_my <- sample(setdiff(g.nms, union(med_genes, one_comp_genes_em)), size=floor(prop.my*ngene))
 
     # a is exposure
     a <- stats::rnorm(n=nsamp)
