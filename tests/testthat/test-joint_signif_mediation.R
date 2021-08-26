@@ -6,7 +6,9 @@ test_that("compare to JSmediation", {
   set.seed(0)
   n <- 20
   E <- rnorm(n); M <- rnorm(n); Y <- rnorm(n)
-  jsp <- joint_signif_mediation(E, M, Y)[1, 1]
+  res <- joint_signif_mediation(E, M, Y)
+  expect_equal(colnames(res), c("EMY.p", "EM.p", "MY.p"))
+  jsp <- res[1,1]
 
   # compare to JSmediation
   # dat <- data.frame(E, M, Y)

@@ -3,9 +3,9 @@
 #' Joint significant mediation test.
 #'
 #' @param M Numeric vector of mediators with one element per sample.
-#' @inheritParams hitman
-#' @return Numeric vector of p-values whose names match \code{hitman} and \code{lotman}.
-#' @details \code{E} and \code{Y} cannot have \code{NA}s.
+#' @inherit hitman
+#' @inheritParams ezlimma::ezcor
+#' @return Data frame with columns \code{EMY.p}, \code{EM.p}, and \code{MY.p}.
 #' @seealso \url{https://github.com/cedricbatailler/JSmediation}.
 
 # p-value is max of both; since both need to be significant for test to be significant

@@ -18,13 +18,17 @@ currently supported.}
 to samples and columns to covariates to be adjusted for.}
 }
 \value{
-Numeric vector of p-values whose names match \code{hitman} and \code{lotman}.
+Data frame with columns \code{EMY.p}, \code{EM.p}, and \code{MY.p}.
 }
 \description{
 Joint significant mediation test.
 }
 \details{
-\code{E} and \code{Y} cannot have \code{NA}s.
+\code{E} and \code{Y} cannot have \code{NA}s. \code{M} may have some \code{NA}s, but rows that have
+less non-missing values than \code{5 + ncol(covariates)} will be filtered out, and if \code{verbose=TRUE},
+a message will be written with the number of rows filtered out.
+
+Larger chi-square values are more significant.
 }
 \seealso{
 \url{https://github.com/cedricbatailler/JSmediation}.
