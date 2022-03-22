@@ -13,7 +13,7 @@ screen_min(
 )
 }
 \arguments{
-\item{p.tab}{Numberic matrix with two columns of p-values.
+\item{p.tab}{Numeric matrix with two columns of p-values.
 Each row is an analyte. No \code{NA}'s allowed.}
 
 \item{thresh}{Numeric threshold, termed \code{c} in Djordjilovic et al. (2019). Min p-values > \code{thresh}

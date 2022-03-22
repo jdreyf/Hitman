@@ -2,7 +2,7 @@
 #'
 #' ScreenMin multiple hypthesis testing for union hypothesis tests from Djordjilovic et al. (2018).
 #'
-#' @param p.tab Numberic matrix with two columns of p-values.
+#' @param p.tab Numeric matrix with two columns of p-values.
 #' Each row is an analyte. No \code{NA}'s allowed.
 #' @param thresh Numeric threshold, termed \code{c} in Djordjilovic et al. (2019). Min p-values > \code{thresh}
 #' are assigned adjusted p-values of one.
