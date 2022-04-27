@@ -141,3 +141,10 @@ test_that("barfield", {
   expect_lte(prop.sig.mat[2, 1], 0.05 + 2*sqrt(0.05*0.95/nsim))
   expect_gte(prop.sig.mat[2, 2], 0.68 - 2*sqrt(0.05*0.95/nsim))
 })
+
+test_that("EList input", {
+  hm <- hitman(E=ee, M=el$E, Y=pheno.v)
+  hm.el <- hitman(E=ee, M=el, Y=pheno.v)
+  # EMY.chisq = 0 is common for both
+  expect_true(mean(hm$EMY.chisq == hm.el[rownames(hm), "EMY.chisq"]) < 0.5)
+})

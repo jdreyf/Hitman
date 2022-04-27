@@ -39,9 +39,9 @@ hitman <- function(E, M, Y, covariates=NULL, fam= "gaussian", reorder.rows=TRUE,
                    verbose=TRUE, check.names=TRUE){
 
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))
-  stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)),
-            stats::var(E) > 0, length(E)==ncol(M), length(Y)==ncol(M), !is.null(rownames(M)), !is.null(colnames(M)),
-            length(unique(Y)) >= 3 || fam == "binomial", nrow(M) > 1)
+  stopifnot(is.numeric(E), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)), is.null(dim(Y)), stats::var(E) > 0,
+            nrow(M) > 1, length(E)==ncol(M), length(Y)==ncol(M), !is.null(rownames(M)), !is.null(colnames(M)),
+            length(unique(Y)) >= 3 || fam == "binomial", limma::isNumeric(M) || class(M)=="EList")
   if (check.names) stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
 
   # ok if covariates is NULL
