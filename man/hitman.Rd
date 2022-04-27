@@ -20,7 +20,7 @@ hitman(
 \item{E}{A numeric vector of exposures.}
 
 \item{M}{A numeric matrix-like data object with one row per feature and one column per sample of mediators.
-Must have more than one feature and have row names and column names.}
+Must have more than one feature and have row names and column names. Can be an object of class `EList`.}
 
 \item{Y}{A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
 currently supported.}
