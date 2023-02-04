@@ -18,6 +18,7 @@
 
 limma_pcor <- function(object, phenotype, covariates, fam="gaussian", reorder.rows=TRUE, prefix=NULL,
                        adjust.method="BH", check.names=TRUE, cols=c("t", "P.Value")){
+
   stopifnot(length(phenotype)==ncol(object), limma::isNumeric(covariates), nrow(as.matrix(covariates))==ncol(object))
   if (check.names){ stopifnot(names(phenotype)==colnames(object)) }
 

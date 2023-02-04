@@ -7,10 +7,13 @@
 #' with mediation p-value in column \code{"EMY.p"}, like \code{\link{hitman}}.
 #' @param b1t2.v Numeric vector of values that both theta2 (\code{"t2"}) and beta1 (\code{"b1"}) take.
 #' @param t1 Numeric value of theta2 i.e. the effect of the exposure on the outcome.
+#' @param alpha Alpha level.
 #' @param nsamp Number of samples.
+#' @param nsim Number of simulations.
 #' @param ngene Number of genes other than that of primary interest to simulate.
+#' @param seed Random seed for reproducibility.
+#' @param verbose Logical; should the number of simulations be printed every 100 simulations?
 #' @param ... Sent to \code{med.fcn}
-#' @inheritParams ezlimma:::sim_fisher
 #' @return Matrix with proportion of significant calls for every combination of \code{t2} and \code{b1}.
 #' @references Barfield R, Shen J, Just AC, Vokonas PS, Schwartz J, Baccarelli AA, VanderWeele TJ, Lin X.
 #' Testing for the indirect effect under the null for genome-wide mediation analyses. Genet Epidemiol.

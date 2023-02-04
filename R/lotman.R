@@ -10,7 +10,7 @@
 #' @export
 
 # need to modify limma_cor, since ezcor does not handle design
-lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, fdr.method=c("BH", "BY"), verbose=TRUE,
+lotman <- function(E, M, Y, covariates=NULL, fam="gaussian", reorder.rows=TRUE, fdr.method=c("BH", "BY"), verbose=TRUE,
                    check.names=TRUE){
 
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))
@@ -20,18 +20,24 @@ lotman <- function(E, M, Y, covariates=NULL, reorder.rows=TRUE, fdr.method=c("BH
     reorder.rows <- FALSE
   }
   stopifnot(is.numeric(E), limma::isNumeric(M), is.numeric(Y), !is.na(E), !is.na(Y), is.null(dim(E)),
-            is.null(dim(Y)), stats::var(E) > 0, length(unique(Y)) >= 3, length(E)==ncol(M), length(Y)==ncol(M))
+            is.null(dim(Y)), stats::var(E) > 0, length(unique(Y)) >= 3, length(E)==ncol(M), length(Y)==ncol(M),
+            length(unique(Y)) >= 3 || fam == "binomial")
   if (check.names) stopifnot(names(E)==colnames(M), colnames(M)==names(Y))
 
   # ok if covariates is NULL
   my.covar <- cbind(E=E, covariates=covariates)
 
   # test EY; return ey.sign & weak assoc warning
-  fm.ey <- stats::lm(Y ~ ., data=data.frame(Y, my.covar))
-  tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "t value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|t|)"])
+  if (fam == "gaussian"){
+    fm.ey <- stats::lm(Y ~ ., data=data.frame(Y, my.covar))
+    tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "t value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|t|)"])
+  } else {
+    fm.ey <- stats::glm(Y ~ ., data=data.frame(Y, my.covar), family=fam)
+    tt.ey <- c(EY.t=summary(fm.ey)$coefficients["E", "z value"], EY.p=summary(fm.ey)$coefficients["E", "Pr(>|z|)"])
+  }
+
   if (tt.ey["EY.p"] > 0.05 && verbose){
-    message("E and Y are not associated at p<0.05 (p=", signif(tt.ey["EY.p"], digits = 2),
-            "), so mediation may not be meaningful.")
+    message("E and Y are not associated at p<0.05 (p=", signif(tt.ey["EY.p"], digits = 2), "), so mediation may not be meaningful.")
   }
   ey.sign <- sign(tt.ey["EY.t"])
 

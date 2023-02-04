@@ -1,6 +1,6 @@
 Package: Hitman
 Title: High-throughput mediation analysis
-Version: 0.1.2.9009
+Version: 0.1.2.9010
 Authors@R: 
     person(given = "Jonathan",
            family = "Dreyfuss",
@@ -12,18 +12,18 @@ Encoding: UTF-8
 LazyData: true
 Imports:
 	ezlimma,
-	knitr,
 	limma (>= 3.34.8),
 	MASS,
-	ppcor,
-	rmarkdown,
-	statmod,
 	stats
 Suggests: 
+	knitr,
 	Matrix,
 	mediation,
 	mvtnorm,
+	ppcor,
+	rmarkdown,
+	statmod,
     testthat,
     covr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr

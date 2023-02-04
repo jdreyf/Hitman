@@ -53,7 +53,7 @@ sim_omics(
 \item{fdr.method}{Character string; either "BH" for Benjamini-Hochberg or "BY" for Benjamini-Yekutieli.
 See stats::p.adjust.}
 
-\item{seed}{Random seed for reprodubility.}
+\item{seed}{Random seed for reproducibility.}
 
 \item{verbose}{Logical; should the number of simulations be printed every 100 simulations?}
 }

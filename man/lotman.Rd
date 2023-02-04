@@ -9,6 +9,7 @@ lotman(
   M,
   Y,
   covariates = NULL,
+  fam = "gaussian",
   reorder.rows = TRUE,
   fdr.method = c("BH", "BY"),
   verbose = TRUE,
@@ -25,6 +26,9 @@ currently supported.}
 
 \item{covariates}{Numeric vector with one element per sample or matrix-like object with rows corresponding
 to samples and columns to covariates to be adjusted for.}
+
+\item{fam}{Character string of family to use in generalized linear model of \code{Y}. The default
+\code{"gaussian"} reduces to the usual linear regression model. See stats::family.}
 
 \item{reorder.rows}{Logical, should rows be reordered by p-value?}
 

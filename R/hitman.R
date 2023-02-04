@@ -35,7 +35,7 @@
 #' Larger chi-square values are more significant.
 #' @export
 
-hitman <- function(E, M, Y, covariates=NULL, fam= "gaussian", reorder.rows=TRUE, fdr.method=c("BH", "BY"),
+hitman <- function(E, M, Y, covariates=NULL, fam="gaussian", reorder.rows=TRUE, fdr.method=c("BH", "BY"),
                    verbose=TRUE, check.names=TRUE){
 
   fdr.method <- match.arg(fdr.method, c("BH", "BY"))

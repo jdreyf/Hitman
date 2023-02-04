@@ -14,7 +14,7 @@
 #' @param prop.em Proportion of genes where E --> M but not M --> Y given E.
 #' @param prop.my Proportion of genes where M --> Y given E but not E --> M.
 #' @param sd.mn Numeric standard deviation of measurement noise.
-#' @inheritParams ezlimma:::sim_fisher
+#' @inheritParams sim_barfield
 #' @inheritParams hitman
 #' @return Matrix with proportion of significant calls for every method for true and null mediators.
 #' @export

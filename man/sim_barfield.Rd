@@ -33,7 +33,7 @@ with mediation p-value in column \code{"EMY.p"}, like \code{\link{hitman}}.}
 
 \item{ngene}{Number of genes other than that of primary interest to simulate.}
 
-\item{seed}{Random seed for reprodubility.}
+\item{seed}{Random seed for reproducibility.}
 
 \item{verbose}{Logical; should the number of simulations be printed every 100 simulations?}
 
