@@ -1,11 +1,11 @@
-#' Joint significant mediation test
+#' Joint significant mediation test for a single mediator
 #'
-#' Joint significant mediation test.
+#' Joint significant mediation test for a single mediator.
 #'
-#' @param M Numeric vector of mediators with one element per sample.
+#' @param M Numeric vector of mediator with one element per sample.
 #' @inherit hitman
 #' @inheritParams ezlimma::ezcor
-#' @return Data frame with columns \code{EMY.p}, \code{EM.p}, and \code{MY.p}.
+#' @return Data frame with one row and columns \code{EMY.p}, \code{EM.p}, and \code{MY.p}.
 #' @seealso \url{https://github.com/cedricbatailler/JSmediation}.
 
 # p-value is max of both; since both need to be significant for test to be significant

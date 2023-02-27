@@ -2,14 +2,14 @@
 % Please edit documentation in R/joint_signif_mediation.R
 \name{joint_signif_mediation}
 \alias{joint_signif_mediation}
-\title{Joint significant mediation test}
+\title{Joint significant mediation test for a single mediator}
 \usage{
 joint_signif_mediation(E, M, Y, covariates = NULL)
 }
 \arguments{
 \item{E}{A numeric vector of exposures.}
 
-\item{M}{Numeric vector of mediators with one element per sample.}
+\item{M}{Numeric vector of mediator with one element per sample.}
 
 \item{Y}{A numeric vector of \code{length(E)} of outcomes. Only continuous, normally distributed outcomes
 currently supported.}
@@ -18,10 +18,10 @@ currently supported.}
 to samples and columns to covariates to be adjusted for.}
 }
 \value{
-Data frame with columns \code{EMY.p}, \code{EM.p}, and \code{MY.p}.
+Data frame with one row and columns \code{EMY.p}, \code{EM.p}, and \code{MY.p}.
 }
 \description{
-Joint significant mediation test.
+Joint significant mediation test for a single mediator.
 }
 \details{
 \code{E} and \code{Y} cannot have \code{NA}s. \code{M} may have some \code{NA}s, but rows that have
