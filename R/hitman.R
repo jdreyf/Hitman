@@ -17,7 +17,7 @@
 #' See stats::p.adjust.
 #' @param verbose Logical; should messages be given for lack of association between \code{E} & \code{Y} and filtering?
 #' @param check.names Logical; should \code{names(E)==colnames(M) & colnames(M)==names(Y)} be checked?
-#' @inheritParams ezlimma::ezcor
+#' @inheritParams ezlimma::limma_cor
 #' @return Data frame with columns
 #' \describe{
 #' \item{EMY.chisq}{Overall chi-square for mediation on 1 degreee of freedom.}

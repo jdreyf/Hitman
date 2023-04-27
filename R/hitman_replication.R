@@ -4,21 +4,20 @@
 #' signed statistic and p-value are supplied via `tab`, and its desired to find rows where there is replication in a common direction.
 #'
 #' @param tab Matrix-like object with statistical and p-value columns. Only the signs of the statistics columns are used.
-#' The object should not have missing values.
+#' `tab` should have non-duplicated row names and should not have missing values.
 #' @param cols Vector of column indices or names in the order of `c(stat1, p1, stat2, p2)`.
-#' @param prefix Character string of length one with prefix of returned columns, e.g. if `prefix="repl"`, returned columns will be `c("repl.chisq", "repl.p")`.
+#' @param prefix Character string of length one with prefix of returned columns, e.g. if `prefix="repl"`, returned columns might
+#' be `c("repl.chisq", "repl.p", "repl.FDR")`.
 #' Prefix is not added if it is `NA`.
 #' @inheritParams hitman
-#' @inheritParams ezlimma::ezcor
+#' @inheritParams ezlimma::limma_cor
 #' @return Data frame whose rows correspond to the rows of `tab` with the same row names and whose columns are
 #' \describe{
 #' \item{chisq}{Chi-square for replication on 1 degreee of freedom.}
 #' \item{p}{P-value for replication}
 #' \item{FDR}{FDR for replication}
 #' }
-#' @details If `tab`'s row names are `NULL`, then `reorder.rows` must be `FALSE`.
-#'
-#' Larger chi-square values are more significant.
+#' @details Larger chi-square values are more significant.
 #' @md
 #' @export
 
@@ -27,8 +26,8 @@ hitman_replication <- function(tab, cols=1:4, reorder.rows=FALSE, fdr.method=c("
   stopifnot(nrow(tab) > 0, cols %in% c(1:ncol(tab), colnames(tab)), length(cols)==4, limma::isNumeric(tab))
   stat.cols <- cols[c(1, 3)]
   p.cols <- cols[c(2, 4)]
-  # don't reorder rows if don't have row names to identify the rows
-  stopifnot(0 <= tab[, p.cols], tab[, p.cols] <= 1, !is.na(tab), is.logical(reorder.rows), !is.null(prefix), !is.null(rownames(tab)) || !reorder.rows)
+  # require rownames for consistency with hitman2_replication, which needs them st can reorder
+  stopifnot(0 <= tab[, p.cols], tab[, p.cols] <= 1, !is.na(tab), is.logical(reorder.rows), !is.null(prefix), !is.null(rownames(tab)))
 
   if (all(tab[, stat.cols] >= 0) | all(tab[, stat.cols] <= 0)){
     warning("All stats are the same sign, which is possible but unlikely for two-sided stats.")
