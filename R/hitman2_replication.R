@@ -16,7 +16,6 @@
 #' }
 #' @details Larger chi-square values are more significant.
 #' @md
-#' @export
 
 hitman2_replication <- function(tab, cols=1:4, reorder.rows=FALSE, p.adj.rate=c("FDR", "FWER"), prefix=NA){
   p.adj.rate <- match.arg(p.adj.rate, c("FDR", "FWER"))
