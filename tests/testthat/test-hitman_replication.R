@@ -26,3 +26,9 @@ test_that("invalid input", {
   rownames(tab2) <- NULL
   expect_error(tab2 |> hitman_replication(reorder.rows = TRUE))
 })
+
+test_that("matches DMT", {
+  dmtr <- DirectionalMaxPTest::dmt(tab=tab.tmp)
+  hmr <- hitman_replication(tab=tab.tmp)
+  expect_true(all(dmtr == hmr))
+})

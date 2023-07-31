@@ -1,7 +1,9 @@
-# Hitman
-
-[![Build Status](https://travis-ci.com/jdreyf/Hitman.svg?branch=master)](https://travis-ci.com/jdreyf/Hitman)
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/jdreyf/Hitman/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jdreyf/Hitman/actions/workflows/R-CMD-check.yaml)
 [![Coverage Status](https://img.shields.io/codecov/c/github/jdreyf/Hitman/master.svg)](https://codecov.io/github/jdreyf/Hitman?branch=master)
+<!-- badges: end -->
+
+# Hitman
 
 ## Install
 On Windows, you should have [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
