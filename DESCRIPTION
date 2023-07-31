@@ -31,4 +31,5 @@ Suggests:
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 Remotes:  
-    github::jdreyf/ezlimma
+    github::jdreyf/ezlimma,
+	github::jdreyf/DirectionalMaxPTest
