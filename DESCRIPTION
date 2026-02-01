@@ -28,8 +28,8 @@ Suggests:
     testthat,
 	tibble,
     covr
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
-Remotes:  
+Remotes: 
     github::jdreyf/ezlimma,
 	github::jdreyf/DirectionalMaxPTest
