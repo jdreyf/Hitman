@@ -71,6 +71,11 @@ test_that("M df", {
 })
 
 test_that("gene1", {
+  e.nonm <- setNames(grp2, nm=NULL)
+  y.nonm <- setNames(M[1,], nm=NULL)
+  hm <- hitman(E=e.nonm, M=M, Y=y.nonm)
+  expect_equal(rownames(hm)[1], "gene1")
+
   hm <- hitman(E=grp2, M=M, Y=M[1,])
   expect_equal(rownames(hm)[1], "gene1")
 
